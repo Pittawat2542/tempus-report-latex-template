@@ -165,10 +165,7 @@
 \date{\today}
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\sffamily\fontsize{7}{9}\selectfont\color{TempusMuted}%
-  \tempus@lab\ifx\tempus@group\@empty\else\ /\ \MakeUppercase{\tempus@group}\fi}
 \fancyhead[R]{\sffamily\fontsize{7}{9}\selectfont\color{TempusMuted}\tempus@shorttitle}
-\fancyfoot[L]{\sffamily\fontsize{7}{9}\selectfont\color{TempusMuted}\tempus@version}
 \fancyfoot[R]{\sffamily\fontsize{8}{10}\selectfont\color{TempusInk}%
   \textcolor{TempusAccent}{\rule{10pt}{1.4pt}}\hspace{8pt}\thepage}
 \renewcommand{\headrulewidth}{.25pt}
