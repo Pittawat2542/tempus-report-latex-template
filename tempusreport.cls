@@ -6,8 +6,12 @@
 \ProvidesClass{tempusreport}[2026/10/01 v1.3 Tempus Reports]
 \newif\iftempus@algorithms
 \newif\iftempus@listings
+\newif\iftempus@banner
+\tempus@bannertrue
 \DeclareOption{algorithms}{\tempus@algorithmstrue}
 \DeclareOption{listings}{\tempus@listingstrue}
+\DeclareOption{banner}{\tempus@bannertrue}
+\DeclareOption{nobanner}{\tempus@bannerfalse}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
 \ProcessOptions\relax
 \LoadClass[10pt,a4paper]{article}
@@ -249,6 +253,7 @@
   \thispagestyle{opening}
   \begingroup
   \setlength{\parskip}{0pt}
+  \iftempus@banner
   \noindent\begin{minipage}[t]{.47\linewidth}
     \ifx\tempus@logo\@empty
       {\sffamily\bfseries\fontsize{20}{24}\selectfont\color{TempusAccent}\tempus@lab\par}%
@@ -274,6 +279,7 @@
   \vspace{14pt}
   {\color{TempusAccent}\hrule height 1.2pt}
   \vspace{20pt}
+  \fi
   {\raggedright\sffamily\bfseries\color{TempusInk}\fontsize{28}{32}\selectfont\@title\par}
   \vspace{12pt}
   \ifx\tempus@authorlayout\tempus@wideauthorlayout

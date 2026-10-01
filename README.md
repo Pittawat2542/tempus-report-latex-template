@@ -174,6 +174,18 @@ non-ASCII code needs an explicit character mapping or a suitable alternative.
 
 ## Customize
 
+The first-page banner is enabled by default (or explicitly with `banner`).
+Use the `nobanner` class option to hide the branding, report type and number,
+version, partner logos, horizontal rule, and their spacing while keeping the
+title and authors:
+
+```tex
+\documentclass[algorithms,listings,nobanner]{tempusreport}
+```
+
+This option only affects the first-page banner; running headers and footers
+on subsequent pages retain their usual appearance.
+
 Default branding is `\reportbrand{Tempus}{Reports}`. Set optional metadata
 with `\reporttype{...}`, `\reportlinks{...}`, and `\date{...}`; empty braces
 hide unwanted fields. Use `\reportauthorlayout{wide}` for full-width authors.
