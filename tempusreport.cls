@@ -280,7 +280,7 @@
   {\color{TempusAccent}\hrule height 1.2pt}
   \vspace{20pt}
   \fi
-  {\raggedright\sffamily\bfseries\color{TempusInk}\fontsize{28}{32}\selectfont\@title\par}
+  {\raggedright\sffamily\bfseries\color{TempusInk}\fontsize{24}{28}\selectfont\@title\par}
   \vspace{12pt}
   \ifx\tempus@authorlayout\tempus@wideauthorlayout
     \tempus@authornames
