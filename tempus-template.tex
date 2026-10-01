@@ -1,0 +1,199 @@
+% Remove either option if your report does not need that content type.
+\documentclass[algorithms,listings]{tempusreport}
+
+% Content-specific helpers; the class already loads amsmath and booktabs.
+\usepackage{mathtools}
+\usepackage{siunitx}
+% Load cleveref after other packages (hyperref is loaded by the class).
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+\title{Your Report Title}
+\author{Your Name}
+\reportauthornote{Your team or institution}
+\reportshorttitle{Your Report}
+\reportnumber{01}
+\reportversion{v1.0}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Summarize the question, your approach, and the main finding. This starter
+demonstrates equations, tables, figures, cross-references, and citations.
+All measurements below are illustrative, not experimental results.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:introduction}
+Explain the purpose of the report and the context for your work.
+For example, \citet{vaswani2017attention} introduced the Transformer
+architecture. Use a parenthetical citation when the reference supports
+a statement rather than forming part of the sentence
+\citep{vaswani2017attention}.
+
+\section{Findings}
+\label{sec:findings}
+Present your evidence and explain what it means. Refer to labeled objects
+with \verb|\cref|, as in \cref{eq:mean,tab:results}, or start a sentence
+with \verb|\Cref|. \Cref{fig:workflow} shows a placeholder for your artwork.
+
+\subsection{Equations and quantities}
+For measurements $x_1,\ldots,x_n$, the sample mean is
+\begin{equation}
+  \bar{x} = \frac{1}{n}\sum_{i=1}^{n} x_i.
+  \label{eq:mean}
+\end{equation}
+Use \verb|\qty| for a number with a unit, such as \qty{12.3}{\milli\second},
+and \verb|\num| for a formatted number, such as \num{10000}.
+
+\subsection{Tables}
+The \texttt{S} columns in \cref{tab:results} align numbers on the decimal
+point. The entries are illustrative and should be replaced with your data.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Illustrative measurements; lower latency is better.}
+  \label{tab:results} % Put float labels after captions.
+  \begin{tabular}{@{}l S[table-format=2.1] S[table-format=2.1]@{}}
+    \reporttoprule
+    Method & {Latency (\unit{\milli\second})} & {Accuracy (\unit{\percent})} \\
+    \midrule
+    Baseline & 18.7 & 91.2 \\
+    \reporthighlight
+    Candidate & 12.3 & 92.5 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Figures}
+Replace the path below with your own image. Until that file exists,
+\verb|\reportimage| draws a placeholder without requiring external assets.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{minipage}{0.65\linewidth}
+    \reportimage{Your workflow diagram}{figures/workflow.pdf}
+  \end{minipage}
+  \caption{Illustrative workflow placeholder.}
+  \label{fig:workflow}
+\end{figure}
+
+\subsection{Scientific ML diagrams}
+\Cref{fig:ml-training} illustrates supervised learning: a forward pass
+produces class probabilities, and backpropagation updates the trainable
+parameters. The diagram uses editable TikZ nodes and the class palette.
+
+\begin{figure}[htbp]
+  \centering
+  % All styles are local to this picture. The class loads the required libraries.
+  \begin{tikzpicture}[
+    font=\sffamily\small,
+    ml block/.style={rounded corners=3pt,line width=.6pt,
+      minimum height=15mm,text width=28mm,align=center,inner sep=5pt},
+    ml flow/.style={-{Stealth[length=2mm,width=1.4mm]},
+      draw=TempusAccent,line width=.9pt},
+    ml gradient/.style={-{Stealth[length=2mm,width=1.4mm]},
+      draw=TempusBurgundy,line width=.8pt,dashed},
+    ml label/.style={font=\sffamily\scriptsize,text=TempusMuted,
+      fill=white,inner sep=3pt}
+  ]
+    \node[ml block,draw=TempusRule,fill=TempusLight] (batch)
+      {\textbf{Mini-batch}\\[4pt]$x\in\mathbb{R}^{B\times d}$};
+    \node[ml block,draw=TempusAccent!45,fill=TempusAccent!7,
+      right=9mm of batch] (encoder)
+      {\textcolor{TempusAccent}{\textbf{Encoder}}\\[4pt]$z=f_{\theta}(x)$};
+    \node[ml block,draw=TempusTeal!50,fill=TempusTealLight,
+      right=9mm of encoder] (head)
+      {\textcolor{TempusTeal}{\textbf{Classifier}}\\[4pt]$p=g_{\phi}(z)$};
+    \node[ml block,draw=TempusAmber!50,fill=TempusAmberLight,
+      right=9mm of head] (loss)
+      {\textcolor{TempusAmber}{\textbf{Cross-entropy}}\\[4pt]
+       $\mathcal{L}=\operatorname{CE}(p,y)$};
+
+    \draw[ml flow] (batch) -- (encoder);
+    \draw[ml flow] (encoder) -- (head);
+    \draw[ml flow] (head) -- (loss);
+    \node[above=8mm of loss,align=center,text=TempusMuted,
+      font=\sffamily\scriptsize] (targets)
+      {\textbf{Target labels}\\[2pt]$y\in\{1,\ldots,C\}^{B}$};
+    \draw[ml flow,draw=TempusMuted] (targets) -- (loss);
+
+    % Dashed arrows carry gradients back to both trainable modules.
+    \coordinate (gradient) at ([yshift=-12mm]loss.south);
+    \draw[ml gradient] (loss.south) -- (gradient)
+      -| (encoder.south);
+    \draw[ml gradient] (head.south |- gradient) -- (head.south);
+    \coordinate (gradientlabel) at (head.south |- gradient);
+    \node[ml label,below=3mm of gradientlabel,align=center]
+      {\textcolor{TempusBurgundy}{\textbf{Backpropagation and parameter update}}\\[3pt]
+       $(\theta,\phi)\gets(\theta,\phi)-\eta\nabla_{\theta,\phi}\mathcal{L}$};
+    \node[ml label,anchor=south west]
+      at ([yshift=5mm]batch.north west) {\textbf{SUPERVISED TRAINING}};
+  \end{tikzpicture}
+  \caption{A mini-batch training step for a classifier with $C$ classes.
+    Solid arrows show the forward computation and label input; dashed
+    arrows show gradient flow. $B$ is the batch size, $d$ the input
+    dimension, and $\eta$ the learning rate.}
+  \label{fig:ml-training}
+\end{figure}
+
+\begin{reportbox}{Key takeaway}
+State the main conclusion or recommended next step.
+\end{reportbox}
+
+\section{Methods and implementation}
+\label{sec:methods}
+
+\subsection{Callouts}
+Use a titled box for supporting context. The optional style selects a
+theme color; the title should also convey the purpose of the callout.
+
+\begin{reportbox}[tempus tip]{Practical tip}
+Keep the method and its implementation together so readers can compare
+the mathematical description with the executable code.
+\end{reportbox}
+
+\begin{reportbox}[tempus warning]{Numerical caution}
+The arithmetic mean is sensitive to outliers. Inspect the measurements
+before interpreting a single summary statistic.
+\end{reportbox}
+
+\subsection{Algorithms}
+\Cref{alg:mean} describes the sample mean from \cref{eq:mean}.
+Algorithms use a floating caption, optional line numbers, and themed
+keywords. Place the label immediately after the caption.
+
+\begin{algorithm}[htbp]
+  \caption{Compute the sample mean.}
+  \label{alg:mean}
+  \begin{algorithmic}[1]
+    \Require Measurements $x_1,\ldots,x_n$ with $n > 0$
+    \Ensure Sample mean $\bar{x}$
+    \State $s \gets 0$ \Comment{Running total}
+    \For{$i \gets 1$ \textbf{to} $n$}
+      \State $s \gets s + x_i$
+    \EndFor
+    \State \Return $s/n$
+  \end{algorithmic}
+\end{algorithm}
+
+\subsection{Code listings}
+The same calculation appears in \cref{lst:mean}. Listings provide syntax
+colors, line numbers, and automatic line wrapping without shell escape.
+
+\begin{lstlisting}[language=Python,caption={A minimal sample mean implementation.},label={lst:mean}]
+def sample_mean(values):
+    """Return the arithmetic mean of a nonempty sequence."""
+    if not values:
+        raise ValueError("At least one measurement is required")
+    # Keep the example close to the pseudocode.
+    total = sum(values)
+    return total / len(values)
+\end{lstlisting}
+
+% BibTeX reads reference.bib; ACL style uses alphabetical author-year references.
+\bibliographystyle{acl_natbib}
+\bibliography{reference}
+
+\end{document}
