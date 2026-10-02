@@ -32,10 +32,12 @@ sources = [ROOT / "tempus-template.tex", *sorted((ROOT / "examples").glob("*.tex
 failures = []
 for source in sources:
     work = out / source.stem
-    work.mkdir(exist_ok=True)
+    if work.exists():
+        shutil.rmtree(work)
+    work.mkdir()
     for filename in ("tempusreport.cls", "acl_natbib.bst", "reference.bib"):
         shutil.copy2(ROOT / filename, work / filename)
-    shutil.copytree(ROOT / "examples", work / "examples", dirs_exist_ok=True)
+    shutil.copytree(ROOT / "examples", work / "examples")
     shutil.copy2(source, work / source.name)
     cmd = ["tectonic", "--keep-logs", "--keep-intermediates"]
     if args.only_cached:
