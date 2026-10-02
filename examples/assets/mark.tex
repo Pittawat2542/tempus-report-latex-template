@@ -1,0 +1,12 @@
+\documentclass{article}
+\usepackage[paperwidth=50mm,paperheight=30mm,margin=0mm]{geometry}
+\usepackage{tikz}
+\pagestyle{empty}
+\begin{document}\noindent
+\begin{tikzpicture}
+\path[use as bounding box] (0,0) rectangle (5,3);
+\fill[blue!15] (0,0) rectangle (5,3);
+\draw[blue!60!black,line width=2pt] (1,1) -- (2.5,2) -- (4,1);
+\node[font=\sffamily\small] at (2.5,.5) {TEMPUS TEST};
+\end{tikzpicture}
+\end{document}
