@@ -1,0 +1,30 @@
+\documentclass[listings]{tempusreport}
+\title{Tempus regression fixture}
+\author{Example Author}\date{October 3, 2026}
+\reportshorttitle{Regression fixture}
+
+\begin{document}\maketitle
+\clearpage
+\noindent Before environment listing.\par
+\vspace*{\dimexpr\textheight-70pt\relax}
+\begin{lstlisting}[caption={CAPENV: A deliberately multiline caption describing the near-bottom listing and its first two code lines, which must remain on the same page despite insufficient space on the preceding page.},label={lst:env}]
+FIRSTENV = 1
+SECONDENV = 2
+THIRDENV = 3
+\end{lstlisting}
+\clearpage
+\noindent Before external listing.\par
+\vspace*{\dimexpr\textheight-70pt\relax}
+\lstinputlisting[caption={CAPFILE: External source pagination.},label={lst:file}]{examples/pagination.py}
+\clearpage
+\lstlistoflistings
+References: \ref{lst:env}, \ref{lst:file}.
+\begin{lstlisting}[float=htbp,caption={Floating listing.},label={lst:float}]
+FLOATLINE = 1
+\end{lstlisting}
+Inline: \lstinline|inlinecode|.
+\begin{lstlisting}[captionpos=b,caption={Bottom caption.}]
+BOTTOMLINE = 1
+\end{lstlisting}
+
+\end{document}

@@ -1,10 +1,42 @@
 # Tempus v1.5.0 roadmap
 
-Reviewed October 2, 2026 against the v1.4.0 stress suite. P1 items should
-lead the next release; P2 items follow once the core regression checks pass.
-This is a plan, not a claim that the proposed behavior already exists.
+Implementation updated October 3, 2026. The report class identifies v1.5.0;
+this is a release candidate, not a completed four-engine release.
 
-## Evidence and current release
+## Implementation status
+
+| Release step | Status | Evidence / remaining gate |
+| --- | --- | --- |
+| Listing pagination | Implemented | Near-bottom environment/external-file fixtures assert caption and first two lines share a page; long listings remain breakable. The example workaround is removed. |
+| Multi-engine validation | Implemented; evidence pending | Runner supports all four engines; GitHub Actions pins Tectonic 0.17.0 by download checksum and TeX Live 2026 by image digest. Only Tectonic is available locally. |
+| Artwork/configuration recovery | Implemented | Exact expected-warning fixtures cover missing/suppressed branding, graphics paths/extensions, unknown enums, nonpositive/oversized widths and negative/excessive overlap. |
+| Continuations and starter | Implemented | Continued boxes, explicit external listing segments, and stored/restored algorithms retain numbering and one logical index entry. Minimal starter includes bibliography instructions. |
+
+The expanded local suite has 22 documents: the comprehensive example, the
+minimal starter, and twenty independent fixtures. The validator inspects
+PDF metadata, bookmarks, named destinations, internal/external links,
+navigation indexes, appendix resets, continuation identities/line numbers,
+optional-package loading, and expected warnings. Canonical PDF drift checks
+compare page text and renders, excluding volatile metadata. Tectonic 0.17.0
+passes all 22 documents plus the isolated vector-asset export. The regenerated
+comprehensive example is seventeen pages with 22 bookmarks, 160 named
+destinations, 112 internal links, and 5 external links. Four validator tests
+reject invalid navigation and visual drift while tolerating metadata changes.
+All report pages, fixture titles, and pagination/continuation pages were
+rendered and reviewed. Valid flat/cuboid artwork renders match the original
+class exactly. Inline code placement is covered by a PDF text-line assertion.
+
+Release completion requires all four CI jobs to pass and a visual font/layout
+review on each engine. Do not close that gate using local Tectonic evidence.
+No release tag or publication is included in this work.
+
+## Historical findings and acceptance criteria
+
+The following findings were reviewed October 2, 2026 against v1.4.0. Their
+reproduction steps describe the old behavior; implemented fixes are listed
+above. Accessibility and expanded Unicode remain open investigations.
+
+## v1.4.0 evidence
 
 The original three-page example and twelve release documents compile with
 Tectonic 0.17.0. The comprehensive example is now sixteen pages. Final LaTeX
@@ -98,7 +130,7 @@ These are not established regressions in the supported release suite.
 | P2 | Review the second page of the long listing and callout: neither repeats a continuation heading. | Readers may lose context in standalone page excerpts. | Provide documented opt-in continuation labels for boxes/listings and a continued algorithm example retaining one logical caption identity. | Continuation labels and page references stay correct across two or more pages, without duplicate navigation entries. |
 | P2 | Start a new report from the sixteen-page stress example. | Validation content makes quick authoring cumbersome. | Add a separate minimal starter while retaining the exhaustive example and fixtures as the regression suite. | The starter builds with the same class, includes clear metadata/bibliography instructions, and links to feature examples. |
 
-## Release sequence
+## Release sequence and remaining gates
 
 1. Add caption-pagination regression fixtures and implement the P1 fix.
 2. Add multi-engine CI and automated checks for PDF metadata, bookmarks,
@@ -109,5 +141,27 @@ These are not established regressions in the supported release suite.
    expanded Unicode support on their own compatibility evidence rather than
    promising them automatically in v1.5.0.
 
-Record delivered changes under a new 1.5.0 changelog entry. Keep this document's
-remaining items open with updated evidence and retain the v1.4.0 cases.
+Delivered changes are recorded under the 1.5.0 release-candidate changelog
+entry. Retain all v1.4.0 cases. CI engine/font evidence, tagged-PDF validation,
+and expanded Unicode support remain open. Presentation work is specified in
+[the v1.6.0 Beamer roadmap](ROADMAP-v1.6.0.md), including shared design packaging.
+
+### Current API and build decisions
+
+- `listings` also loads `needspace`; the actual caption is captured once before
+  placement, preserving counters, auxiliary writes, and anchors.
+- Missing logo falls back to native branding; missing mascot is omitted with
+  its space; partner placeholders stay inside the requested slot. Artwork
+  validation follows rendering, including `nobanner` behavior.
+- Unknown enums reset to compact/flat. Nonpositive widths reset to 40 mm;
+  widths cap at 45% of available line width. Negative overlap becomes zero;
+  overlap caps at min(12 mm, half the rendered mascot height).
+- `tempus continued` repeats box titles automatically. Listings use explicit
+  segments through `\reportcontinuedlisting[options]{original-label}{file}`;
+  automatic listing page breaks do not repeat headings. Continue sequential
+  segments without unrelated listings between them. Algorithms use
+  `\reportcontinuedalgorithmcaption{original-label}` with stored/restored state.
+- Canonical PDF checks/updates use Tectonic. The pinned TeX Live image is
+  `ghcr.io/xu-cheng/texlive-full@sha256:d9bfb267e3e3f5e0820ca86e867ee59ebb133fc29561bb28677d9b5a1a9e84ff`,
+  from the publisher's [20260701 release](https://github.com/xu-cheng/latex-docker/pkgs/container/texlive-full).
+  CI preserves version records, inspection JSON, PDFs, and logs for review.

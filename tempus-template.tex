@@ -16,8 +16,8 @@
 \reportauthornote{Template validation laboratory}
 \reportshorttitle{Tempus Stress Suite}
 \reportnumber{01}
-\reportversion{v1.4.0}
-\date{October 2, 2026}
+\reportversion{v1.5.0}
+\date{October 3, 2026}
 
 \begin{document}
 \maketitle
@@ -194,8 +194,6 @@ keywords. Place the label immediately after the caption.
   \end{algorithmic}
 \end{algorithm}
 
-% Start the short listing with its heading and caption (avoid an orphan caption).
-\clearpage
 \subsection{Code listings}
 The same calculation appears in \cref{lst:mean}. Listings provide syntax
 colors, line numbers, and automatic line wrapping without shell escape.
@@ -244,7 +242,7 @@ A block quotation demonstrates margins and paragraph spacing. This is
 original example prose, rather than a quotation from an external source.
 \end{quote}
 Links: \href{https://example.org}{a named link}, and a wrapping URL:
-\url{https://example.org/reports/tempus/validation/a-long-path-with-several-components?configuration=stress-suite&version=1.4.0}.
+\url{https://example.org/reports/tempus/validation/a-long-path-with-several-components?configuration=stress-suite&version=1.5.0}.
 References: \cref{sec:text,eq:system,tab:flexible,fig:panels,thm:positive,alg:continued,lst:external}.
 Supplementary content is in \cref{sec:appendix,sec:appendix-details}.
 Citation variants: \citeauthor{vaswani2017attention},
@@ -396,12 +394,12 @@ Panel references: \cref{fig:actual,fig:missing} and \subref{fig:actual}.
 \end{longtable}
 
 \section{Continuation stress cases}
-\begin{reportbox}[tempus important]{Important limitation}
+\begin{reportbox}[tempus important,tempus continued]{Important limitation}
 All measurements are synthetic. This suite validates typesetting, not
 scientific claims. \placeholder{Replace with your own evidence.}
 \end{reportbox}
 \clearpage
-\begin{reportbox}{Multipage note}
+\begin{reportbox}[tempus continued]{Multipage note}
 Checkpoint 1. This deliberately repeated paragraph verifies that a breakable callout continues across pages without clipping its text or losing its colored rule. Nested content includes an inline equation $r_i=i/n$ and a reference to \cref{eq:mean}.
 
 Checkpoint 2. This deliberately repeated paragraph verifies that a breakable callout continues across pages without clipping its text or losing its colored rule. Nested content includes an inline equation $r_i=i/n$ and a reference to \cref{eq:mean}.
@@ -466,7 +464,7 @@ Checkpoint 24. This deliberately repeated paragraph verifies that a breakable ca
 % Force a real page boundary between stored and restored algorithm state.
 \clearpage
 \begin{algorithm}[htbp]
-\caption{Filter and aggregate, second part.}\label{alg:continued-second}
+\reportcontinuedalgorithmcaption{alg:continued}
 \begin{algorithmic}[1]
 \algrestore{positive}
 \State \Return $s$

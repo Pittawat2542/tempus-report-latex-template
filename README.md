@@ -5,6 +5,10 @@ Helvetica-style headings, Libertine body text, and an editorial first page.
 
 ## Use
 
+For a new report, copy `tempus-starter.tex` with `tempusreport.cls`,
+`acl_natbib.bst`, and `reference.bib`, then run `tectonic tempus-starter.tex`.
+Use the comprehensive example below to explore features.
+
 Keep `tempusreport.cls`, `acl_natbib.bst`, and `reference.bib` beside
 `tempus-template.tex`.
 Edit the example's title,
@@ -37,7 +41,7 @@ pdflatex -synctex=1 tempus-template.tex
 
 ## Working examples
 
-The example is the v1.4.0 report stress suite. It demonstrates typography,
+The example is the v1.5.0 report stress suite. It demonstrates typography,
 heading levels, lists, footnotes, links, navigation indexes, citations,
 advanced mathematics and proofs, flexible and multipage tables, real and
 missing artwork, subfigures, an editable TikZ training diagram, all callout
@@ -51,27 +55,50 @@ these are content-specific dependencies, not new class requirements.
 
 ### Reproducible stress checks
 
-With Python 3 and Tectonic installed, run:
+With Python 3, Tectonic, and the PDF inspection dependency installed, run:
 
 ```sh
+python3 -m pip install -r scripts/requirements.txt
 python3 scripts/validate.py
+python3 -m unittest discover -s scripts -p 'test_*.py'
 ```
 
-The runner compiles the main example and eleven independent option fixtures
-in isolated directories under `.build/validation/`. It checks final logs for
-layout warnings, missing glyphs, unresolved references and citations, and
-checks that disabled optional features do not load their packages. It exits
-nonzero on failures and preserves PDFs, logs, and build output for review.
-Use `--only-cached` for offline checks after the initial package download;
-use `--update-example` to replace the tracked example PDF after all checks pass.
-Visual review is still required: clean logs do not guarantee good pagination.
+The runner compiles the comprehensive example, minimal starter, and twenty
+option/regression fixtures into `.build/validation/<engine>/`. It rejects
+layout warnings, missing glyphs, unresolved references/citations, and unexpected
+class/package warnings. Negative fixtures declare exact expected class warnings
+in `examples/expected-warnings.json`. It also checks optional-package activation,
+appendix and continuation numbering, caption/code pagination, PDF metadata,
+bookmarks, link destinations, and navigation indexes. PDFs, logs,
+`toolchain.txt`, and `inspection.json` remain available for review.
+
+Use `--only-cached` for offline Tectonic checks after the first package download.
+Use `--engine pdflatex`, `--engine xelatex`, or `--engine lualatex` with a complete
+TeX Live installation and BibTeX. These engines run an initial LaTeX pass,
+BibTeX when needed, and three further LaTeX passes. All builds remain
+shell-escape-free.
+
+`--update-example` replaces the tracked PDF only after the whole suite passes.
+`--check-example` compares the tracked and regenerated PDF's page text and
+72 dpi renders, ignoring volatile PDF metadata. It requires Poppler's
+`pdftoppm`, and tolerates at most 0.1% color-channel differences exceeding
+16/255 for rasterizer antialiasing. Canonical PDF updates/drift checks and asset
+exports use Tectonic only. Visual review remains required.
+
+CI runs Tectonic 0.17.0 (download checksum pinned) and all three engines from
+an immutable TeX Live 2026 image, retaining evidence for 30 days. Local Tectonic
+success does not complete the four-engine release gate. The 1.5.0 implementation
+is a release candidate until the matrix and cross-engine font review pass.
 
 | Fixtures | Purpose |
 | --- | --- |
 | `default`, `banner`, `nobanner` | First-page banner behavior and subsequent-page styling |
 | `algorithms`, `listings`, `combined` | Independent optional-package activation |
 | `wide`, `empty`, `long-metadata` | Author layout, empty fields, and title/header wrapping |
-| `art-flat`, `art-cuboid` | Logo, partner helpers, mascot overlap, and abstract styling |
+| `art-flat`, `art-cuboid`, `graphics-path` | Artwork sizing, abstract styling, implicit extensions and graphics paths |
+| `listing-pagination`, `continuations` | Caption placement, long listings, continuation identity and numbering |
+| `missing-artwork`, `suppressed-artwork`, `suppressed-mascot` | Recovery and render-only artwork validation |
+| `invalid-settings`, `invalid-dimensions`, `oversized-dimensions` | Exact warnings and deterministic safe defaults |
 
 Fixture sources live in `examples/`. The validation runner resolves class and
 asset paths for them automatically. Rebuild the bundled vector asset with
@@ -80,7 +107,9 @@ The isolated export uses the same `\reportlogomark` artwork as the class banner,
 so the default mark and bundled PDF remain consistent.
 
 See [CHANGELOG.md](CHANGELOG.md) for release changes and
-[the v1.5.0 roadmap](docs/ROADMAP-v1.5.0.md) for evidence and next-version plans.
+[the v1.5.0 roadmap](docs/ROADMAP-v1.5.0.md) for implementation and release gates.
+[The v1.6.0 roadmap](docs/ROADMAP-v1.6.0.md) specifies a Beamer deck for technical
+and executive presentations sharing the report's design language.
 
 The class already includes `graphicx`, `amsmath`, `amssymb`, `booktabs`,
 `tabularx`, `array`, `enumitem`, `caption`, `subcaption`, TikZ, `tcolorbox`,
@@ -153,7 +182,7 @@ Enable themed pseudocode and code blocks with class options:
 Use either option independently, or omit both for reports without these content
 types. The example enables both to demonstrate them. The `algorithms` option
 loads `algorithm` for floats and `algpseudocode` (from `algorithmicx`) for
-pseudocode. The `listings` option loads `listings` and selects the `tempus`
+pseudocode. The `listings` option loads `listings` and `needspace`, and selects the `tempus`
 style. These follow the standard [algorithmicx](https://ctan.org/pkg/algorithmicx)
 and [listings](https://ctan.org/pkg/listings) interfaces.
 
@@ -202,7 +231,11 @@ The `tempus` style provides a pale background, thin slate frame, navy keywords,
 teal comments, burgundy strings, line numbers, and wrapped long lines. Code
 uses a dedicated Latin Modern monospace face at `\footnotesize` (8 pt with
 the default 10 pt body), preserving natural glyph widths and indentation. Listings
-can break across pages unless you request a float. No shell escape is required.
+can break across pages unless you request a float. The class reserves the actual
+caption height plus space for two initial code lines before display listings,
+including external files; explicit user page breaks still take precedence.
+Floating and bottom-caption listings retain their standard behavior.
+No shell escape is required.
 Select the language per listing; no language is assumed globally.
 
 Use `\lstinputlisting[language=Python,caption={...},label={lst:source}]{file.py}`
@@ -213,6 +246,38 @@ for example `numbers=none` or `basicstyle=\tempuscodefont\scriptsize`.
 Use `\lstset{...}` for document-wide changes, or `style=tempus` to reselect the
 class style. `listings` does not handle arbitrary Unicode source automatically;
 non-ASCII code needs an explicit character mapping or a suitable alternative.
+
+### Continued content
+
+Opt in to repeated box headings with `tempus continued`:
+
+```tex
+\begin{reportbox}[tempus continued]{Long explanation}
+Content spanning several pages.
+\end{reportbox}
+```
+
+For explicit source segments, give the first segment its numbered caption and
+label, then continue immediately with the helper:
+
+```tex
+\lstinputlisting[firstline=1,lastline=20,caption={Training loop.},
+  label={lst:training}]{training.py}
+\reportcontinuedlisting[firstline=21,lastline=40]{lst:training}{training.py}
+```
+
+The continuation heading references the original listing number, resumes line
+numbering (`firstnumber=last`), and adds no caption-list entry or label. Options
+such as language, source ranges, and font remain available; identity-related
+caption/title/label settings are reserved by the helper. Continue segments in
+sequence, without an intervening unrelated listing. Automatic listing page
+breaks retain the ordinary frame; repeated listing headings use explicit segments.
+
+For split pseudocode, keep `\algstore`/`\algrestore` and replace the second
+numbered caption with `\reportcontinuedalgorithmcaption{alg:original}` inside
+its `algorithm` float. Label the first numbered caption. The second heading is
+unnumbered and references that caption, so the logical algorithm has one number
+and one index entry. See `examples/continuations.tex` for both workflows.
 
 ## Appendices
 
@@ -261,13 +326,23 @@ The default banner uses a 17 pt wordmark, tighter rule spacing, and a
 21 pt title with 25 pt line spacing. Set optional metadata
 with `\reporttype{...}`, `\reportlinks{...}`, and `\date{...}`; empty braces
 hide unwanted fields. Use `\reportauthorlayout{wide}` for full-width authors.
+`\reportauthorlayout` accepts `compact`/`wide`; `\reportabstractstyle` accepts
+`flat`/`cuboid`. Unknown values warn and reset to compact/flat. Mascot widths
+must be positive (otherwise 40 mm) and cannot exceed 45% of available line
+width. Overlap must be nonnegative and cannot exceed the smaller of 12 mm or
+half the rendered mascot height. Corrections warn; dimensions must use ordinary
+valid TeX dimension syntax.
 
 Separate authors with `\author{Alice\and Bob}`; both compact and wide
 layouts render comma-separated names.
 
 Optional artwork: `\reportlogo{path}`, `\reportmascot[40mm]{path}`, and
-`\reportpartners{...}`. No artwork is needed by default. Optional title-artwork paths must exist;
-only `\reportimage` currently provides a missing-file placeholder.
+`\reportpartners{...}`. No artwork is needed by default. Artwork paths support `\graphicspath` and implicit graphics extensions.
+Missing title artwork emits a class warning naming the file: a missing logo
+falls back to native branding, a missing mascot and its space are omitted,
+and missing partner artwork gets a bounded placeholder. `nobanner` skips checks
+for logo/partner artwork it does not render; abstract mascots are still checked.
+Existing `\reportimage` missing-image placeholders remain warning-free.
 
 The class provides `reportbox`, `\reportimage{description}{path}` (with a
 missing-image placeholder), `\reportcontents`, and table helpers

@@ -3,7 +3,7 @@
 % Copyright (c) 2026 Lovart report template contributors.
 % Distributed under the MIT license; see LICENSE.
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{tempusreport}[2026/10/02 v1.4.0 Tempus Reports]
+\ProvidesClass{tempusreport}[2026/10/03 v1.5.0 Tempus Reports]
 \newif\iftempus@algorithms
 \newif\iftempus@listings
 \newif\iftempus@banner
@@ -71,6 +71,7 @@
 \fi
 \iftempus@listings
   \RequirePackage{listings}
+  \RequirePackage{needspace}
   % Keep code font selection local; do not replace the report's body fonts.
   \ifPDFTeX
     \newcommand{\tempuscodefont}{\fontfamily{lmtt}\selectfont}
@@ -147,27 +148,67 @@
 \newcommand{\reportversion}[1]{\gdef\tempus@version{#1}}
 \newcommand{\reportshorttitle}[1]{\gdef\tempus@shorttitle{#1}}
 \newcommand{\reportauthornote}[1]{\gdef\tempus@authornote{#1}}
-\newcommand{\reportauthorlayout}[1]{\gdef\tempus@authorlayout{#1}}
+\newcommand{\reportauthorlayout}[1]{%
+  \def\tempus@value{#1}\def\tempus@compact{compact}%
+  \ifx\tempus@value\tempus@compact\gdef\tempus@authorlayout{compact}%
+  \else\ifx\tempus@value\tempus@wideauthorlayout\gdef\tempus@authorlayout{wide}%
+  \else\ClassWarningNoLine{tempusreport}{Unknown author layout '#1'; using compact}%
+    \gdef\tempus@authorlayout{compact}%
+  \fi\fi}
+
 \def\tempus@wideauthorlayout{wide}
 \newcommand{\reportlinks}[1]{\gdef\tempus@links{#1}}
 \newcommand{\reportlogo}[1]{\gdef\tempus@logo{#1}}
 \newcommand{\reportmascot}[2][40mm]{\gdef\tempus@mascotwidth{#1}\gdef\tempus@mascot{#2}}
 \newcommand{\reportmascotoverlap}[1]{\gdef\tempus@mascotoverlap{#1}}
-\newcommand{\reportabstractstyle}[1]{\gdef\tempus@abstractstyle{#1}}
+\newcommand{\reportabstractstyle}[1]{%
+  \def\tempus@value{#1}\def\tempus@flat{flat}%
+  \ifx\tempus@value\tempus@flat\gdef\tempus@abstractstyle{flat}%
+  \else\ifx\tempus@value\tempus@cuboidstyle\gdef\tempus@abstractstyle{cuboid}%
+  \else\ClassWarningNoLine{tempusreport}{Unknown abstract style '#1'; using flat}%
+    \gdef\tempus@abstractstyle{flat}%
+  \fi\fi}
+
 \def\tempus@cuboidstyle{cuboid}
 \def\tempus@cubedepth{8mm}
 \def\tempus@cubeside{4mm}
 \newlength{\tempus@mascotheight}
 \newcommand{\reportpartners}[1]{\gdef\tempus@partners{#1}}
+% Match graphicx's search paths and implicit extension lookup without loading a file.
+\newif\iftempus@artfound
+\newcommand{\tempus@ifart}[3]{%
+  \begingroup\tempus@artfoundfalse
+  \let\input@path\Ginput@path
+  \IfFileExists{#1}{\tempus@artfoundtrue}{%
+    \@for\tempus@ext:=\Gin@extensions\do{%
+      \IfFileExists{#1\tempus@ext}{\tempus@artfoundtrue}{}%
+    }%
+  }%
+  \iftempus@artfound\endgroup#2\else\endgroup
+    \ClassWarningNoLine{tempusreport}{Missing artwork '#1'}#3%
+  \fi
+}
+\newcommand{\tempus@artplaceholder}[1]{%
+  \begin{tikzpicture}
+    \path[use as bounding box] (0,0) rectangle (#1,20pt);
+    \draw[TempusRule] (.5pt,.5pt) rectangle (#1-.5pt,19.5pt);
+    \node[text=TempusMuted,font=\sffamily\fontsize{5}{6}\selectfont]
+      at (.5*#1,10pt) {LOGO};
+  \end{tikzpicture}%
+}
 \newcommand{\partnerwordmark}[3][]{%
   \begin{minipage}[c]{#2}\centering
-    \includegraphics[#1,width=\linewidth,height=20pt,keepaspectratio]{#3}%
+    \tempus@ifart{#3}{%
+      \includegraphics[#1,width=\linewidth,height=20pt,keepaspectratio]{#3}%
+    }{\tempus@artplaceholder{\linewidth}}%
   \end{minipage}%
 }
 \newcommand{\partnerinstitution}[3][46mm]{%
   \begin{minipage}[c]{#1}\setlength{\parskip}{0pt}%
     \if\relax\detokenize{#3}\relax
-      \includegraphics[width=\linewidth,height=20pt,keepaspectratio]{#2}%
+      \tempus@ifart{#2}{%
+        \includegraphics[width=\linewidth,height=20pt,keepaspectratio]{#2}%
+      }{\tempus@artplaceholder{\linewidth}}%
     \else
       \begin{minipage}[c]{20pt}\centering
         \if\relax\detokenize{#2}\relax
@@ -176,7 +217,9 @@
             \node[text=TempusMuted,font=\sffamily\fontsize{5}{6}\selectfont] at (0,0) {LOGO};
           \end{tikzpicture}%
         \else
-          \includegraphics[width=20pt,height=20pt,keepaspectratio]{#2}%
+          \tempus@ifart{#2}{%
+            \includegraphics[width=20pt,height=20pt,keepaspectratio]{#2}%
+          }{\tempus@artplaceholder{20pt}}%
         \fi
       \end{minipage}\hspace{5pt}%
       \begin{minipage}[c]{\dimexpr\linewidth-25pt\relax}
@@ -184,6 +227,38 @@
       \end{minipage}%
     \fi
   \end{minipage}%
+}
+\newlength{\tempus@artlimit}
+\newcommand{\tempus@preparemascot}{%
+  \ifx\tempus@mascot\@empty\else
+    \tempus@ifart{\tempus@mascot}{} {\global\let\tempus@mascot\@empty}%
+    \ifx\tempus@mascot\@empty\else
+      \@tempdima=\tempus@mascotwidth\relax
+      \ifdim\@tempdima>0pt\else
+        \ClassWarningNoLine{tempusreport}{Nonpositive mascot width; using 40mm}%
+        \@tempdima=40mm\relax
+      \fi
+      \tempus@artlimit=.45\linewidth\relax
+      \ifdim\@tempdima>\tempus@artlimit
+        \ClassWarningNoLine{tempusreport}{Mascot width exceeds 45 percent; clamped}%
+        \@tempdima=\tempus@artlimit\relax
+      \fi
+      \xdef\tempus@mascotwidth{\the\@tempdima}%
+      \settoheight{\tempus@mascotheight}{\includegraphics[width=\tempus@mascotwidth]{\tempus@mascot}}%
+      \@tempdima=\tempus@mascotoverlap\relax
+      \ifdim\@tempdima<0pt
+        \ClassWarningNoLine{tempusreport}{Negative mascot overlap; using 0pt}%
+        \@tempdima=0pt\relax
+      \fi
+      \tempus@artlimit=.5\tempus@mascotheight\relax
+      \ifdim\tempus@artlimit>12mm\tempus@artlimit=12mm\relax\fi
+      \ifdim\@tempdima>\tempus@artlimit
+        \ClassWarningNoLine{tempusreport}{Mascot overlap exceeds safe height; clamped}%
+        \@tempdima=\tempus@artlimit\relax
+      \fi
+      \xdef\tempus@mascotoverlap{\the\@tempdima}%
+    \fi
+  \fi
 }
 \reportbrand{Tempus}{Reports}
 \reporttype{TECHNICAL REPORT}
@@ -236,7 +311,13 @@
   \algrenewcommand\algorithmicfunction{\tempus@algorithmkeyword{function}}
   \algrenewcommand\algorithmicprocedure{\tempus@algorithmkeyword{procedure}}
   \AddToHook{env/algorithmic/begin}{\small}
+  \newcommand{\reportcontinuedalgorithmcaption}[1]{%
+    \caption*{\textsf{\textbf{Algorithm \ref{#1}.}}\space Continued}%
+  }
+
 \fi
+% Keep listings' conditional outside a skipped class-option branch.
+\newcommand{\tempus@ifdisplaylisting}[2]{\lst@ifdisplaystyle#1\else#2\fi}
 \iftempus@listings
   \lstdefinestyle{tempus}{
     basicstyle=\tempuscodefont\footnotesize\color{TempusInk},
@@ -254,6 +335,40 @@
     upquote=true,captionpos=t,aboveskip=10pt,belowskip=10pt
   }
   \lstset{style=tempus}
+  % Capture the real caption once: counters, writes, and anchors are not replayed.
+  % MakeCaption runs after listing options and at the listing's actual width.
+  \newbox\tempus@listingcaption
+  \newlength{\tempus@listingreserve}
+  \AtBeginDocument{%
+    \let\tempus@makecaption\lst@MakeCaption
+    \def\lst@MakeCaption#1{%
+      \ifx#1t%
+        \ifx\lst@float\relax
+          \tempus@ifdisplaylisting{%
+          \lst@IfSubstring t\lst@captionpos{%
+          \ifinner\tempus@makecaption{#1}\else
+            \setbox\tempus@listingcaption=\vbox{\tempus@makecaption{#1}}%
+            \begingroup\lst@basicstyle
+              \global\tempus@listingreserve=2\baselineskip\relax
+            \endgroup
+            \advance\tempus@listingreserve by \ht\tempus@listingcaption
+            \advance\tempus@listingreserve by \dp\tempus@listingcaption
+            \advance\tempus@listingreserve by \lst@aboveskip\relax
+            \advance\tempus@listingreserve by 2\lst@frametextsep\relax
+            \Needspace{\tempus@listingreserve}%
+            \unvbox\tempus@listingcaption
+          \fi
+          }{\tempus@makecaption{#1}}%
+          }{\tempus@makecaption{#1}}%
+        \else\tempus@makecaption{#1}\fi
+      \else\tempus@makecaption{#1}\fi
+    }%
+  }
+  \newcommand{\reportcontinuedlisting}[3][]{%
+    \lstinputlisting[firstnumber=last,#1,caption={},label={},nolol=true,
+      title={Listing \ref{#2}. Continued}]{#3}%
+  }
+
   \captionsetup[lstlisting]{font=small,labelfont={sf,bf,color=TempusAccent},
     labelsep=period,skip=7pt}
 \fi
@@ -289,7 +404,11 @@
   \thispagestyle{opening}
   \begingroup
   \setlength{\parskip}{0pt}
+  \tempus@preparemascot
   \iftempus@banner
+  \ifx\tempus@logo\@empty\else
+    \tempus@ifart{\tempus@logo}{}{\let\tempus@logo\@empty}%
+  \fi
   \noindent\begin{minipage}[t]{.47\linewidth}
     \ifx\tempus@logo\@empty
       {\sffamily\bfseries\fontsize{17}{20}\selectfont\color{TempusAccent}\reportlogomark\hspace{3mm}\tempus@lab\par}%
@@ -386,6 +505,7 @@
   overlay first={\tempus@abstractart},
   before skip=0pt,after skip=12pt}
 \renewenvironment{abstract}{%
+  \tempus@preparemascot
   \begin{tempusabstractbox}
   {\sffamily\bfseries\fontsize{8}{10}\selectfont\MakeUppercase{\abstractname}\par}
   \vspace{3pt}\normalfont\normalsize
@@ -399,6 +519,7 @@
     fonttitle=\sffamily\small\bfseries,coltitle=TempusAccent,
     attach title to upper={\par\smallskip},
     borderline west={1.5pt}{0pt}{TempusAccent}},
+  tempus continued/.style={title after break={\tcbtitle\space(continued)}},
   tempus note/.style={colback=TempusLight,coltitle=TempusAccent,
     borderline west={1.5pt}{0pt}{TempusAccent}},
   tempus tip/.style={colback=TempusTealLight,coltitle=TempusTeal,

@@ -1,0 +1,24 @@
+{
+  "missing-artwork": [
+    "Missing artwork 'missing-mascot.pdf'",
+    "Missing artwork 'missing-logo.pdf'",
+    "Missing artwork 'missing-wordmark.pdf'",
+    "Missing artwork 'missing-icon.pdf'",
+    "Missing artwork 'missing-partner.pdf'"
+  ],
+  "suppressed-mascot": [
+    "Missing artwork 'missing-mascot.pdf'"
+  ],
+  "invalid-settings": [
+    "Unknown author layout 'unknown'; using compact",
+    "Unknown abstract style 'unknown'; using flat"
+  ],
+  "invalid-dimensions": [
+    "Nonpositive mascot width; using 40mm",
+    "Negative mascot overlap; using 0pt"
+  ],
+  "oversized-dimensions": [
+    "Mascot width exceeds 45 percent; clamped",
+    "Mascot overlap exceeds safe height; clamped"
+  ]
+}

@@ -1,0 +1,22 @@
+% Keep tempusreport.cls, acl_natbib.bst, and reference.bib beside this file.
+% Compile with: tectonic tempus-starter.tex
+% See README.md and tempus-template.tex for complete feature examples.
+\documentclass{tempusreport}
+\title{Your report title}
+\author{Your Name}
+\reportauthornote{Your Institute}
+\reportshorttitle{Your short title}
+\reportnumber{01}
+\reportversion{v1.0} % Your document version, independent of the class release.
+\date{October 3, 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+Describe the problem, approach, and main finding in a short paragraph.
+\end{abstract}
+\section{Introduction}
+Write your report here. Add entries to reference.bib and cite their keys;
+for example, \citet{vaswani2017attention}.
+\bibliographystyle{acl_natbib}
+\bibliography{reference}
+\end{document}

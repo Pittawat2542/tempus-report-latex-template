@@ -1,0 +1,61 @@
+name: Report validation
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  reports:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [tectonic, pdflatex, xelatex, lualatex]
+    env:
+      # Verified linux/amd64 image from the publisher's 20260701 release.
+      TEMPUS_TEXLIVE_IMAGE: ghcr.io/xu-cheng/texlive-full@sha256:d9bfb267e3e3f5e0820ca86e867ee59ebb133fc29561bb28677d9b5a1a9e84ff
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Install PDF inspection dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y poppler-utils
+          python3 -m venv .build/venv
+          .build/venv/bin/pip install -r scripts/requirements.txt
+      - name: Install pinned Tectonic
+        if: matrix.engine == 'tectonic'
+        run: |
+          curl --fail --location --retry 3 -o /tmp/tectonic.tar.gz https://github.com/tectonic-typesetting/tectonic/releases/download/tectonic%400.17.0/tectonic-0.17.0-x86_64-unknown-linux-gnu.tar.gz
+          echo '1a715688baf591e650c8aeb160ae934e181685eecbb38b317de30b269ac5d606  /tmp/tectonic.tar.gz' | sha256sum --check
+          mkdir -p .build/bin
+          tar -xzf /tmp/tectonic.tar.gz -C .build/bin
+          echo "$GITHUB_WORKSPACE/.build/bin" >> "$GITHUB_PATH"
+      - name: Prepare immutable TeX Live toolchain
+        if: matrix.engine != 'tectonic'
+        run: |
+          docker pull "$TEMPUS_TEXLIVE_IMAGE"
+          mkdir -p .build/bin
+          for engine in pdflatex xelatex lualatex bibtex; do
+            ln -s "$GITHUB_WORKSPACE/scripts/texlive-engine.sh" ".build/bin/$engine"
+          done
+          echo "$GITHUB_WORKSPACE/.build/bin" >> "$GITHUB_PATH"
+          echo "TEMPUS_WORKSPACE=$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+      - name: Test release evidence checks
+        run: .build/venv/bin/python -m unittest discover -s scripts -p 'test_*.py'
+      - name: Validate reports and canonical PDF
+        env:
+          TEMPUS_ENGINE: ${{ matrix.engine }}
+        run: |
+          if [ "$TEMPUS_ENGINE" = tectonic ]; then
+            .build/venv/bin/python scripts/validate.py --engine tectonic --check-example
+          else
+            .build/venv/bin/python scripts/validate.py --engine "$TEMPUS_ENGINE"
+          fi
+      - name: Retain release evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: reports-${{ matrix.engine }}
+          path: .build/validation/${{ matrix.engine }}/
+          retention-days: 30

@@ -1,0 +1,65 @@
+\documentclass[algorithms,listings]{tempusreport}
+\title{Tempus regression fixture}
+\author{Example Author}\date{October 3, 2026}
+\reportshorttitle{Regression fixture}
+
+\begin{document}\maketitle
+\lstinputlisting[firstline=1,lastline=2,caption={One source.},label={lst:original}]{examples/pagination.py}
+\clearpage
+\reportcontinuedlisting[firstline=3,lastline=5]{lst:original}{examples/pagination.py}
+\begin{algorithm}[htbp]
+\caption{One algorithm.}\label{alg:original}
+\begin{algorithmic}[1]\State $x\gets1$\algstore{continuation}\end{algorithmic}
+\end{algorithm}
+\clearpage
+\begin{algorithm}[htbp]
+\reportcontinuedalgorithmcaption{alg:original}
+\begin{algorithmic}[1]\algrestore{continuation}\State $x\gets x+1$\end{algorithmic}
+\end{algorithm}
+\begin{reportbox}[tempus continued]{Continuing box}
+Checkpoint 1. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 1. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 1. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries.
+
+Checkpoint 2. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 2. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 2. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries.
+
+Checkpoint 3. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 3. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 3. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries.
+
+Checkpoint 4. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 4. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 4. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries.
+
+Checkpoint 5. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 5. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 5. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries.
+
+Checkpoint 6. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 6. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 6. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries.
+
+Checkpoint 7. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 7. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 7. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries.
+
+Checkpoint 8. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 8. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 8. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries.
+
+Checkpoint 9. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 9. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 9. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries.
+
+Checkpoint 10. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 10. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 10. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries.
+
+Checkpoint 11. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 11. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 11. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries.
+
+Checkpoint 12. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 12. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 12. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries.
+
+Checkpoint 13. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 13. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 13. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries.
+
+Checkpoint 14. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 14. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 14. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries.
+
+Checkpoint 15. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 15. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 15. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries.
+
+Checkpoint 16. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 16. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 16. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries.
+
+Checkpoint 17. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 17. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 17. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries.
+
+Checkpoint 18. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 18. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries. Checkpoint 18. This paragraph checks that a continued box remains readable, with its title repeated and no extra navigation entries.
+\end{reportbox}
+\begin{lstlisting}[caption={Next logical listing.},label={lst:next}]
+NEXTLISTING = 1
+\end{lstlisting}
+\begin{algorithm}[htbp]
+\caption{Next logical algorithm.}\label{alg:next}
+\begin{algorithmic}[1]\State $y\gets1$\end{algorithmic}
+\end{algorithm}
+\clearpage\lstlistoflistings\listofalgorithms
+
+\end{document}

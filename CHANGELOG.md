@@ -3,10 +3,23 @@
 All notable template changes are recorded here. Versions refer to the template
 class release; `\reportversion` remains author-controlled report metadata.
 
-## [Unreleased]
+## [1.5.0] - Unreleased release candidate
 
 ### Added
 
+- Caption-space protection for environment and external-file listings, with
+  optional needspace loading and PDF pagination regression checks.
+- Render-only missing-artwork warnings and recovery, including graphics-path
+  and implicit-extension support.
+- Explicit layout/style validation and bounded mascot width/overlap recovery.
+- Opt-in continued box headings, external listing segments, and algorithm
+  captions retaining one logical numbered caption and index entry.
+- A minimal report starter and nine regression fixtures (twenty fixtures total).
+- Four-engine validation CLI and digest/checksum-pinned GitHub Actions matrix,
+  exact expected-warning checks, PDF navigation/metadata/continuation assertions,
+  and canonical PDF text/render drift checks.
+- A decision-complete v1.6.0 Beamer roadmap covering shared design packaging,
+  technical and executive layouts, aspect ratios, handouts, and acceptance gates.
 - Native navy/teal T logomark, reused in the default brand lockup and bundled
   vector asset via `\reportlogomark`.
 - An isolated asset-export option (`--rebuild-assets`) in the validation runner.
@@ -14,6 +27,18 @@ class release; `\reportversion` remains author-controlled report metadata.
   equation/figure/table/algorithm/listing numbers, and cleveref appendix names.
 - Two supplementary appendices in the stress example and a default-option
   appendix fixture; validation checks A.1/B.1 resets and reference types.
+
+### Fixed
+
+- Listing captions no longer require the example's manual page-break workaround.
+- Optional missing branding no longer aborts a report build.
+- Continued algorithms in the stress example retain the first caption identity.
+
+### Release gate
+
+- Local Tectonic 0.17.0 validation and visual review are recorded in the roadmap.
+  pdfLaTeX, XeLaTeX, and LuaLaTeX remain pending CI evidence and font review.
+  This entry does not declare a completed release or a publication date.
 
 ### Changed
 
@@ -25,9 +50,16 @@ class release; `\reportversion` remains author-controlled report metadata.
   remain unchanged; natural glyph widths and indentation are preserved.
 - The example bibliography precedes the supplementary appendices, and the
   expanded contents starts on its own page.
-- All twelve documents pass Tectonic validation, including appendix counter
-  and reference checks; the regenerated example is seventeen pages. The code
-  font size and rendered pages were verified.
+
+### Validation
+
+- All 22 report documents pass Tectonic 0.17.0 validation; four tests verify
+  warning parsing, rejection of invalid link destinations, and PDF drift policy.
+- The regenerated example is seventeen pages, with resolved navigation,
+  citations, and references. Existing flat/cuboid artwork fixture renders match
+  the original class exactly. All report pages and fixture titles were reviewed.
+- Inline listings retain their surrounding text line, checked in the PDF;
+  pagination tests also cover floating and bottom-caption listings.
 
 ## [1.4.0] - 2026-10-02
 
