@@ -231,7 +231,9 @@
 \renewcommand{\bibfont}{\small}
 \newcommand{\tempus@authornames}{%
   \ifx\@author\@empty\else
-    {\normalfont\sffamily\normalsize\bfseries\color{TempusInk}\@author\par}
+    % article's \and opens tabular blocks; our author layout is paragraph-based.
+    {\def\and{\unskip,\space\ignorespaces}%
+      \normalfont\sffamily\normalsize\bfseries\color{TempusInk}\@author\par}
   \fi
 }
 \newcommand{\tempus@authorblock}{%
