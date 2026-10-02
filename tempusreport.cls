@@ -3,7 +3,7 @@
 % Copyright (c) 2026 Lovart report template contributors.
 % Distributed under the MIT license; see LICENSE.
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{tempusreport}[2026/10/01 v1.3 Tempus Reports]
+\ProvidesClass{tempusreport}[2026/10/02 v1.4.0 Tempus Reports]
 \newif\iftempus@algorithms
 \newif\iftempus@listings
 \newif\iftempus@banner
@@ -379,7 +379,7 @@
   }{%
     \begin{tikzpicture}
       \path[fill=TempusLight] (0,0) rectangle (\linewidth,.66\linewidth);
-      \node[align=center,text=TempusMuted,font=\sffamily\small]
+      \node[align=center,text width=.85\linewidth,text=TempusMuted,font=\sffamily\small]
         at (.5\linewidth,.33\linewidth) {#1\\[4pt]{\scriptsize Image placeholder}};
     \end{tikzpicture}%
   }%
