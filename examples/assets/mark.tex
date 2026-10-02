@@ -1,12 +1,12 @@
-\documentclass{article}
-\usepackage[paperwidth=50mm,paperheight=30mm,margin=0mm]{geometry}
-\usepackage{tikz}
+% Vector export of the same mark used by the default class banner.
+% Compile from the repository root; the export intentionally uses the class.
+\documentclass{tempusreport}
+\geometry{paperwidth=50mm,paperheight=30mm,margin=0mm}
 \pagestyle{empty}
-\begin{document}\noindent
-\begin{tikzpicture}
-\path[use as bounding box] (0,0) rectangle (5,3);
-\fill[blue!15] (0,0) rectangle (5,3);
-\draw[blue!60!black,line width=2pt] (1,1) -- (2.5,2) -- (4,1);
-\node[font=\sffamily\small] at (2.5,.5) {TEMPUS TEST};
+\begin{document}
+\begin{tikzpicture}[remember picture,overlay]
+  \node[inner sep=0pt] at (current page.center)
+    {\scalebox{3.333333}{\reportlogomark}};
 \end{tikzpicture}
+\null
 \end{document}

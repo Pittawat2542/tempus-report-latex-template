@@ -132,6 +132,15 @@
 \setcounter{tocdepth}{2}
 \setlist[itemize]{leftmargin=1.5em,itemsep=3pt,topsep=4pt,parsep=0pt}
 \setlist[enumerate]{leftmargin=1.8em,itemsep=3pt,topsep=4pt,parsep=0pt}
+% Native vector mark: a T crossbar/stem with an offset teal time tick.
+\newcommand{\reportlogomark}{%
+  \begin{tikzpicture}[x=1mm,y=1mm,baseline=1mm]
+    \path[use as bounding box] (0,0) rectangle (6,6);
+    \fill[TempusAccent] (0,4.5) rectangle (6,6);
+    \fill[TempusAccent] (2.25,0) rectangle (3.75,4.5);
+    \fill[TempusTeal] (4.5,0) rectangle (6,1.5);
+  \end{tikzpicture}%
+}
 \newcommand{\reportbrand}[2]{\gdef\tempus@lab{#1}\gdef\tempus@group{#2}}
 \newcommand{\reporttype}[1]{\gdef\tempus@type{#1}}
 \newcommand{\reportnumber}[1]{\gdef\tempus@number{#1}}
@@ -283,13 +292,13 @@
   \iftempus@banner
   \noindent\begin{minipage}[t]{.47\linewidth}
     \ifx\tempus@logo\@empty
-      {\sffamily\bfseries\fontsize{20}{24}\selectfont\color{TempusAccent}\tempus@lab\par}%
+      {\sffamily\bfseries\fontsize{17}{20}\selectfont\color{TempusAccent}\reportlogomark\hspace{3mm}\tempus@lab\par}%
     \else
-      \includegraphics[height=22pt]{\tempus@logo}\par
+      \includegraphics[height=18pt]{\tempus@logo}\par
     \fi
     \ifx\tempus@group\@empty\else
-      \vspace{3pt}{\sffamily\fontsize{8}{10}\selectfont\color{TempusMuted}%
-        \MakeUppercase{\tempus@group}\par}%
+      \vspace{2pt}{\sffamily\fontsize{7}{9}\selectfont\color{TempusMuted}%
+        \ifx\tempus@logo\@empty\hspace*{9mm}\fi\MakeUppercase{\tempus@group}\par}%
     \fi
   \end{minipage}\hfill
   \begin{minipage}[t]{.48\linewidth}\raggedleft
@@ -301,14 +310,14 @@
       \fi\par}
   \end{minipage}\par
   \ifx\tempus@partners\@empty\else
-    \vspace{12pt}\noindent\tempus@partners\par
+    \vspace{7pt}\noindent\tempus@partners\par
   \fi
-  \vspace{14pt}
-  {\color{TempusAccent}\hrule height 1.2pt}
-  \vspace{20pt}
+  \vspace{8pt}
+  {\color{TempusAccent}\hrule height .8pt}
+  \vspace{10pt}
   \fi
-  {\raggedright\sffamily\bfseries\color{TempusInk}\fontsize{24}{28}\selectfont\@title\par}
-  \vspace{12pt}
+  {\raggedright\sffamily\bfseries\color{TempusInk}\fontsize{21}{25}\selectfont\@title\par}
+  \vspace{9pt}
   \ifx\tempus@authorlayout\tempus@wideauthorlayout
     \tempus@authornames
     \vspace{4pt}

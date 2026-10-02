@@ -7,6 +7,9 @@ class release; `\reportversion` remains author-controlled report metadata.
 
 ### Added
 
+- Native navy/teal T logomark, reused in the default brand lockup and bundled
+  vector asset via `\reportlogomark`.
+- An isolated asset-export option (`--rebuild-assets`) in the validation runner.
 - Explicit appendix headings with alphabetic sections, appendix-scoped
   equation/figure/table/algorithm/listing numbers, and cleveref appendix names.
 - Two supplementary appendices in the stress example and a default-option
@@ -14,6 +17,9 @@ class release; `\reportversion` remains author-controlled report metadata.
 
 ### Changed
 
+- Compact first-page banner: smaller wordmark and custom-logo height, tighter
+  partner/rule spacing, and a thinner divider.
+- Title reduced from 24/28 pt to 21/25 pt, with a smaller gap before authors.
 - Listings use a dedicated Latin Modern monospace font at footnote size
   instead of the wider Libertine monospace font at small size. Body fonts
   remain unchanged; natural glyph widths and indentation are preserved.

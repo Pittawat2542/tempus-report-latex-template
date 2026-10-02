@@ -9,10 +9,25 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--only-cached", action="store_true")
+parser.add_argument("--rebuild-assets", action="store_true", help="rebuild the bundled vector mark from the class")
 parser.add_argument("--update-example", action="store_true", help="copy the validated main PDF into the repository")
 args = parser.parse_args()
 out = ROOT / ".build" / "validation"
 out.mkdir(parents=True, exist_ok=True)
+if args.rebuild_assets:
+    asset_work = out / "mark-export"
+    asset_work.mkdir(exist_ok=True)
+    shutil.copy2(ROOT / "tempusreport.cls", asset_work / "tempusreport.cls")
+    shutil.copy2(ROOT / "examples" / "assets" / "mark.tex", asset_work / "mark.tex")
+    asset_cmd = ["tectonic", "--keep-logs"]
+    if args.only_cached:
+        asset_cmd.append("--only-cached")
+    result = subprocess.run([*asset_cmd, "mark.tex"], cwd=asset_work, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    (asset_work / "build-output.txt").write_text(result.stdout)
+    if result.returncode:
+        raise SystemExit(result.stdout[-4000:])
+    shutil.copy2(asset_work / "mark.pdf", ROOT / "examples" / "assets" / "mark.pdf")
+    print("PASS vector mark export", flush=True)
 sources = [ROOT / "tempus-template.tex", *sorted((ROOT / "examples").glob("*.tex"))]
 failures = []
 for source in sources:

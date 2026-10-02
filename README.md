@@ -74,9 +74,10 @@ Visual review is still required: clean logs do not guarantee good pagination.
 | `art-flat`, `art-cuboid` | Logo, partner helpers, mascot overlap, and abstract styling |
 
 Fixture sources live in `examples/`. The validation runner resolves class and
-asset paths for them automatically. Rebuild the bundled vector test asset with
-`tectonic --outdir examples/assets examples/assets/mark.tex` from the root.
-It is original geometric test artwork, not a production logo.
+asset paths for them automatically. Rebuild the bundled vector asset with
+`python3 scripts/validate.py --rebuild-assets --update-example` from the root.
+The isolated export uses the same `\reportlogomark` artwork as the class banner,
+so the default mark and bundled PDF remain consistent.
 
 See [CHANGELOG.md](CHANGELOG.md) for release changes and
 [the v1.5.0 roadmap](docs/ROADMAP-v1.5.0.md) for evidence and next-version plans.
@@ -253,7 +254,11 @@ title and authors:
 This option only affects the first-page banner; running headers and footers
 on subsequent pages retain their usual appearance.
 
-Default branding is `\reportbrand{Tempus}{Reports}`. Set optional metadata
+Default branding is `\reportbrand{Tempus}{Reports}`, paired with a native
+navy T mark and teal accent. `\reportlogomark` draws the mark in the current
+class palette and can be reused in TikZ figures or scaled with `\scalebox`.
+The default banner uses a 17 pt wordmark, tighter rule spacing, and a
+21 pt title with 25 pt line spacing. Set optional metadata
 with `\reporttype{...}`, `\reportlinks{...}`, and `\date{...}`; empty braces
 hide unwanted fields. Use `\reportauthorlayout{wide}` for full-width authors.
 
