@@ -4,29 +4,45 @@
 % Content-specific helpers; the class already loads amsmath and booktabs.
 \usepackage{mathtools}
 \usepackage{siunitx}
+\usepackage{longtable}
+\usepackage{amsthm}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
 % Load cleveref after other packages (hyperref is loaded by the class).
 \usepackage[nameinlink,noabbrev]{cleveref}
 
-\title{Your Report Title}
-\author{Your Name}
-\reportauthornote{Your team or institution}
-\reportshorttitle{Your Report}
+\title{Tempus Report Feature and Layout Stress Suite}
+\author{Example Author}
+\reportauthornote{Template validation laboratory}
+\reportshorttitle{Tempus Stress Suite}
 \reportnumber{01}
-\reportversion{v1.0}
-\date{\today}
+\reportversion{v1.4.0}
+\date{October 2, 2026}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-Summarize the question, your approach, and the main finding. This starter
-demonstrates equations, tables, figures, cross-references, and citations.
-All measurements below are illustrative, not experimental results.
+This document exercises simple and complex report features, navigation,
+mathematics, artwork, and content spanning page boundaries. Independent
+fixtures cover title layouts and class options. All measurements and the
+bundled artwork are synthetic; this is a typesetting stress test rather
+than an experimental report.
 \end{abstract}
+
+% Give the expanded contents its own page rather than a short continuation.
+\clearpage
+\reportcontents
+\listoffigures
+\listoftables
+\listofalgorithms
+\lstlistoflistings
+\clearpage
 
 \section{Introduction}
 \label{sec:introduction}
-Explain the purpose of the report and the context for your work.
+The purpose of this report is to expose typography and layout regressions
+while preserving a usable example of each feature.
 For example, \citet{vaswani2017attention} introduced the Transformer
 architecture. Use a parenthetical citation when the reference supports
 a statement rather than forming part of the sentence
@@ -34,7 +50,7 @@ a statement rather than forming part of the sentence
 
 \section{Findings}
 \label{sec:findings}
-Present your evidence and explain what it means. Refer to labeled objects
+The following examples establish the basic report building blocks. Refer to labeled objects
 with \verb|\cref|, as in \cref{eq:mean,tab:results}, or start a sentence
 with \verb|\Cref|. \Cref{fig:workflow} shows a placeholder for your artwork.
 
@@ -178,6 +194,8 @@ keywords. Place the label immediately after the caption.
   \end{algorithmic}
 \end{algorithm}
 
+% Start the short listing with its heading and caption (avoid an orphan caption).
+\clearpage
 \subsection{Code listings}
 The same calculation appears in \cref{lst:mean}. Listings provide syntax
 colors, line numbers, and automatic line wrapping without shell escape.
@@ -192,8 +210,379 @@ def sample_mean(values):
     return total / len(values)
 \end{lstlisting}
 
-% BibTeX reads reference.bib; ACL style uses alphabetical author-year references.
+
+\section{Text, structure, and navigation}
+\label{sec:text}
+\subsection{Typography and characters}
+Roman text, \textbf{bold}, \textit{italic}, \emph{emphasis},
+\textsf{sans serif}, \texttt{monospace}, and \textsc{small capitals}.
+Escaped characters: \# \$ \% \& \_ \{ \}; accents: caf\'e,
+na\"ive, fa\c{c}ade, \L ukasz. Text symbols include \textbackslash,
+\textasciitilde, and \textasciicircum. A footnote tests bottom-of-page
+placement.\footnote{A deliberately longer footnote with a citation
+\citep{vaswani2017attention} and an explanation of the illustrative data.}
+\subsubsection{Third-level heading}
+This level is numbered but omitted from the default contents depth.
+\paragraph{Run-in heading.} The paragraph follows on the same line.
+\begin{itemize}
+\item An outer bullet.
+  \begin{itemize}\item A nested bullet with inline math $a^2+b^2=c^2$.
+    \begin{itemize}\item A third-level bullet.\end{itemize}
+  \end{itemize}
+\item A second outer bullet.
+\end{itemize}
+\begin{enumerate}
+\item A numbered step.\begin{enumerate}\item A nested numbered step.\end{enumerate}
+\item A second step.
+\end{enumerate}
+\begin{description}
+\item[Coverage] Every supported feature receives a reproducible example.
+\item[Stress case] Content deliberately crosses page boundaries.
+\end{description}
+\begin{quote}
+A block quotation demonstrates margins and paragraph spacing. This is
+original example prose, rather than a quotation from an external source.
+\end{quote}
+Links: \href{https://example.org}{a named link}, and a wrapping URL:
+\url{https://example.org/reports/tempus/validation/a-long-path-with-several-components?configuration=stress-suite&version=1.4.0}.
+References: \cref{sec:text,eq:system,tab:flexible,fig:panels,thm:positive,alg:continued,lst:external}.
+Supplementary content is in \cref{sec:appendix,sec:appendix-details}.
+Citation variants: \citeauthor{vaswani2017attention},
+\citeyearpar{vaswani2017attention}, and
+\citep[see][Section 3]{vaswani2017attention}.
+Multiple-entry citation: \citep{vaswani2017attention,tempus2026fixture,example2026book}.
+The latter two entries are explicitly synthetic bibliography-formatting tests,
+including a corporate author, an accented author name, and book metadata.
+
+\section{Advanced mathematics}
+\begin{subequations}\label{eq:system}
+\begin{align}
+ f(x) &= x^2+2x+1,\label{eq:polynomial}\\
+ f'(x)&=2x+2.\label{eq:derivative}
+\end{align}
+\end{subequations}
+\begin{equation}
+\begin{split}
+\mathcal{J}(\theta)&=\sum_{i=1}^{n}\lVert y_i-f_\theta(x_i)\rVert_2^2\\
+&\quad+\lambda\lVert\theta\rVert_2^2.
+\end{split}
+\end{equation}
+\begin{multline}
+(a+b+c+d)^2=a^2+b^2+c^2+d^2\\
++2ab+2ac+2ad+2bc+2bd+2cd.
+\end{multline}
+\[
+ A=\begin{pmatrix}1&2\\3&4\end{pmatrix},\quad
+ B=\begin{bmatrix}0&1\\1&0\end{bmatrix},\quad
+ g(x)=\begin{cases}x^2,&x\geq0,\\-x,&x<0.\end{cases}
+\]
+\[
+\operatorname{Var}(X)=\mathbb{E}[(X-\mathbb{E}X)^2],\qquad
+\int_0^1 x^2\,\mathrm{d}x=\frac13,\qquad
+\left\lVert\frac{\partial f}{\partial\theta}\right\rVert_2.
+\]
+Scientific notation \num{1.234e-5}, uncertainty \num{1.23(4)}, and
+compound units \qty{9.81}{\metre\per\second\squared}.
+\begin{theorem}\label{thm:positive}
+If $x>0$, then $x^2>0$.
+\end{theorem}
+\begin{proof}Multiplication of two positive numbers is positive.\end{proof}
+\begin{lemma}For all real $x$, $(x+1)^2\geq0$.\end{lemma}
+
+\section{Tables and paired artwork}
+\begin{table}[htbp]
+\caption{Flexible text columns, grouped headers, and emphasis helpers.}
+\label{tab:flexible}\centering
+\begin{tabularx}{\linewidth}{@{}l X rr@{}}
+\reporttoprule
+ & & \multicolumn{2}{c}{Illustrative scores}\\
+\cmidrule(lr){3-4}
+Method & Explanation & First & Second\\\midrule
+Baseline & A paragraph-length cell wraps within the available width. & 81 & \second{89}\\
+\reporthighlight
+Candidate & A highlighted row tests the palette and bold emphasis. & \best{93} & 88\\
+\bottomrule
+\end{tabularx}
+\end{table}
+\begin{figure}[htbp]\centering
+\begin{subfigure}[t]{.47\linewidth}\centering
+\reportimage{Bundled vector artwork}{examples/assets/mark.pdf}
+\caption{Existing artwork.}\label{fig:actual}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{.47\linewidth}\centering
+\reportimage{Missing artwork}{examples/assets/intentionally-missing.pdf}
+\caption{Fallback placeholder.}\label{fig:missing}
+\end{subfigure}
+\caption[Paired artwork and fallback]{Two panels exercise artwork sizing, fallback handling, subcaptions,
+and a deliberately extended caption that wraps across multiple lines while
+remaining aligned with the report text. Both panels should remain within
+one figure and retain their own reference anchors.}\label{fig:panels}
+\end{figure}
+Panel references: \cref{fig:actual,fig:missing} and \subref{fig:actual}.
+\clearpage
+\subsection{Multipage table}
+\begin{longtable}{@{}r >{\raggedright\arraybackslash}p{.62\linewidth} r@{}}
+\caption{Multipage measurements with repeated headings.}\label{tab:long}\\
+\reporttoprule ID & Description & Score\\\midrule\endfirsthead
+\multicolumn{3}{l}{\small Table \thetable\ continued}\\
+\reporttoprule ID & Description & Score\\\midrule\endhead
+\midrule\multicolumn{3}{r}{\small Continued on next page}\\\endfoot
+\bottomrule\endlastfoot
+1 & Illustrative measurement 1: repeated prose checks row spacing and pagination. & 81 \\
+2 & Illustrative measurement 2: repeated prose checks row spacing and pagination. & 82 \\
+3 & Illustrative measurement 3: repeated prose checks row spacing and pagination. & 83 \\
+4 & Illustrative measurement 4: repeated prose checks row spacing and pagination. & 84 \\
+5 & Illustrative measurement 5: repeated prose checks row spacing and pagination. & 85 \\
+6 & Illustrative measurement 6: repeated prose checks row spacing and pagination. & 86 \\
+7 & Illustrative measurement 7: repeated prose checks row spacing and pagination. & 87 \\
+8 & Illustrative measurement 8: repeated prose checks row spacing and pagination. & 88 \\
+9 & Illustrative measurement 9: repeated prose checks row spacing and pagination. & 89 \\
+10 & Illustrative measurement 10: repeated prose checks row spacing and pagination. & 90 \\
+11 & Illustrative measurement 11: repeated prose checks row spacing and pagination. & 91 \\
+12 & Illustrative measurement 12: repeated prose checks row spacing and pagination. & 92 \\
+13 & Illustrative measurement 13: repeated prose checks row spacing and pagination. & 93 \\
+14 & Illustrative measurement 14: repeated prose checks row spacing and pagination. & 94 \\
+15 & Illustrative measurement 15: repeated prose checks row spacing and pagination. & 95 \\
+16 & Illustrative measurement 16: repeated prose checks row spacing and pagination. & 96 \\
+17 & Illustrative measurement 17: repeated prose checks row spacing and pagination. & 80 \\
+18 & Illustrative measurement 18: repeated prose checks row spacing and pagination. & 81 \\
+19 & Illustrative measurement 19: repeated prose checks row spacing and pagination. & 82 \\
+20 & Illustrative measurement 20: repeated prose checks row spacing and pagination. & 83 \\
+21 & Illustrative measurement 21: repeated prose checks row spacing and pagination. & 84 \\
+22 & Illustrative measurement 22: repeated prose checks row spacing and pagination. & 85 \\
+23 & Illustrative measurement 23: repeated prose checks row spacing and pagination. & 86 \\
+24 & Illustrative measurement 24: repeated prose checks row spacing and pagination. & 87 \\
+25 & Illustrative measurement 25: repeated prose checks row spacing and pagination. & 88 \\
+26 & Illustrative measurement 26: repeated prose checks row spacing and pagination. & 89 \\
+27 & Illustrative measurement 27: repeated prose checks row spacing and pagination. & 90 \\
+28 & Illustrative measurement 28: repeated prose checks row spacing and pagination. & 91 \\
+29 & Illustrative measurement 29: repeated prose checks row spacing and pagination. & 92 \\
+30 & Illustrative measurement 30: repeated prose checks row spacing and pagination. & 93 \\
+31 & Illustrative measurement 31: repeated prose checks row spacing and pagination. & 94 \\
+32 & Illustrative measurement 32: repeated prose checks row spacing and pagination. & 95 \\
+33 & Illustrative measurement 33: repeated prose checks row spacing and pagination. & 96 \\
+34 & Illustrative measurement 34: repeated prose checks row spacing and pagination. & 80 \\
+35 & Illustrative measurement 35: repeated prose checks row spacing and pagination. & 81 \\
+36 & Illustrative measurement 36: repeated prose checks row spacing and pagination. & 82 \\
+37 & Illustrative measurement 37: repeated prose checks row spacing and pagination. & 83 \\
+38 & Illustrative measurement 38: repeated prose checks row spacing and pagination. & 84 \\
+39 & Illustrative measurement 39: repeated prose checks row spacing and pagination. & 85 \\
+40 & Illustrative measurement 40: repeated prose checks row spacing and pagination. & 86 \\
+41 & Illustrative measurement 41: repeated prose checks row spacing and pagination. & 87 \\
+42 & Illustrative measurement 42: repeated prose checks row spacing and pagination. & 88 \\
+43 & Illustrative measurement 43: repeated prose checks row spacing and pagination. & 89 \\
+44 & Illustrative measurement 44: repeated prose checks row spacing and pagination. & 90 \\
+45 & Illustrative measurement 45: repeated prose checks row spacing and pagination. & 91 \\
+46 & Illustrative measurement 46: repeated prose checks row spacing and pagination. & 92 \\
+47 & Illustrative measurement 47: repeated prose checks row spacing and pagination. & 93 \\
+48 & Illustrative measurement 48: repeated prose checks row spacing and pagination. & 94 \\
+49 & Illustrative measurement 49: repeated prose checks row spacing and pagination. & 95 \\
+50 & Illustrative measurement 50: repeated prose checks row spacing and pagination. & 96 \\
+51 & Illustrative measurement 51: repeated prose checks row spacing and pagination. & 80 \\
+52 & Illustrative measurement 52: repeated prose checks row spacing and pagination. & 81 \\
+53 & Illustrative measurement 53: repeated prose checks row spacing and pagination. & 82 \\
+54 & Illustrative measurement 54: repeated prose checks row spacing and pagination. & 83 \\
+55 & Illustrative measurement 55: repeated prose checks row spacing and pagination. & 84 \\
+56 & Illustrative measurement 56: repeated prose checks row spacing and pagination. & 85 \\
+57 & Illustrative measurement 57: repeated prose checks row spacing and pagination. & 86 \\
+58 & Illustrative measurement 58: repeated prose checks row spacing and pagination. & 87 \\
+59 & Illustrative measurement 59: repeated prose checks row spacing and pagination. & 88 \\
+60 & Illustrative measurement 60: repeated prose checks row spacing and pagination. & 89 \\
+61 & Illustrative measurement 61: repeated prose checks row spacing and pagination. & 90 \\
+62 & Illustrative measurement 62: repeated prose checks row spacing and pagination. & 91 \\
+63 & Illustrative measurement 63: repeated prose checks row spacing and pagination. & 92 \\
+64 & Illustrative measurement 64: repeated prose checks row spacing and pagination. & 93 \\
+65 & Illustrative measurement 65: repeated prose checks row spacing and pagination. & 94 \\
+\end{longtable}
+
+\section{Continuation stress cases}
+\begin{reportbox}[tempus important]{Important limitation}
+All measurements are synthetic. This suite validates typesetting, not
+scientific claims. \placeholder{Replace with your own evidence.}
+\end{reportbox}
+\clearpage
+\begin{reportbox}{Multipage note}
+Checkpoint 1. This deliberately repeated paragraph verifies that a breakable callout continues across pages without clipping its text or losing its colored rule. Nested content includes an inline equation $r_i=i/n$ and a reference to \cref{eq:mean}.
+
+Checkpoint 2. This deliberately repeated paragraph verifies that a breakable callout continues across pages without clipping its text or losing its colored rule. Nested content includes an inline equation $r_i=i/n$ and a reference to \cref{eq:mean}.
+
+Checkpoint 3. This deliberately repeated paragraph verifies that a breakable callout continues across pages without clipping its text or losing its colored rule. Nested content includes an inline equation $r_i=i/n$ and a reference to \cref{eq:mean}.
+
+Checkpoint 4. This deliberately repeated paragraph verifies that a breakable callout continues across pages without clipping its text or losing its colored rule. Nested content includes an inline equation $r_i=i/n$ and a reference to \cref{eq:mean}.
+
+Checkpoint 5. This deliberately repeated paragraph verifies that a breakable callout continues across pages without clipping its text or losing its colored rule. Nested content includes an inline equation $r_i=i/n$ and a reference to \cref{eq:mean}.
+
+Checkpoint 6. This deliberately repeated paragraph verifies that a breakable callout continues across pages without clipping its text or losing its colored rule. Nested content includes an inline equation $r_i=i/n$ and a reference to \cref{eq:mean}.
+
+Checkpoint 7. This deliberately repeated paragraph verifies that a breakable callout continues across pages without clipping its text or losing its colored rule. Nested content includes an inline equation $r_i=i/n$ and a reference to \cref{eq:mean}.
+
+Checkpoint 8. This deliberately repeated paragraph verifies that a breakable callout continues across pages without clipping its text or losing its colored rule. Nested content includes an inline equation $r_i=i/n$ and a reference to \cref{eq:mean}.
+
+Checkpoint 9. This deliberately repeated paragraph verifies that a breakable callout continues across pages without clipping its text or losing its colored rule. Nested content includes an inline equation $r_i=i/n$ and a reference to \cref{eq:mean}.
+
+Checkpoint 10. This deliberately repeated paragraph verifies that a breakable callout continues across pages without clipping its text or losing its colored rule. Nested content includes an inline equation $r_i=i/n$ and a reference to \cref{eq:mean}.
+
+Checkpoint 11. This deliberately repeated paragraph verifies that a breakable callout continues across pages without clipping its text or losing its colored rule. Nested content includes an inline equation $r_i=i/n$ and a reference to \cref{eq:mean}.
+
+Checkpoint 12. This deliberately repeated paragraph verifies that a breakable callout continues across pages without clipping its text or losing its colored rule. Nested content includes an inline equation $r_i=i/n$ and a reference to \cref{eq:mean}.
+
+Checkpoint 13. This deliberately repeated paragraph verifies that a breakable callout continues across pages without clipping its text or losing its colored rule. Nested content includes an inline equation $r_i=i/n$ and a reference to \cref{eq:mean}.
+
+Checkpoint 14. This deliberately repeated paragraph verifies that a breakable callout continues across pages without clipping its text or losing its colored rule. Nested content includes an inline equation $r_i=i/n$ and a reference to \cref{eq:mean}.
+
+Checkpoint 15. This deliberately repeated paragraph verifies that a breakable callout continues across pages without clipping its text or losing its colored rule. Nested content includes an inline equation $r_i=i/n$ and a reference to \cref{eq:mean}.
+
+Checkpoint 16. This deliberately repeated paragraph verifies that a breakable callout continues across pages without clipping its text or losing its colored rule. Nested content includes an inline equation $r_i=i/n$ and a reference to \cref{eq:mean}.
+
+Checkpoint 17. This deliberately repeated paragraph verifies that a breakable callout continues across pages without clipping its text or losing its colored rule. Nested content includes an inline equation $r_i=i/n$ and a reference to \cref{eq:mean}.
+
+Checkpoint 18. This deliberately repeated paragraph verifies that a breakable callout continues across pages without clipping its text or losing its colored rule. Nested content includes an inline equation $r_i=i/n$ and a reference to \cref{eq:mean}.
+
+Checkpoint 19. This deliberately repeated paragraph verifies that a breakable callout continues across pages without clipping its text or losing its colored rule. Nested content includes an inline equation $r_i=i/n$ and a reference to \cref{eq:mean}.
+
+Checkpoint 20. This deliberately repeated paragraph verifies that a breakable callout continues across pages without clipping its text or losing its colored rule. Nested content includes an inline equation $r_i=i/n$ and a reference to \cref{eq:mean}.
+
+Checkpoint 21. This deliberately repeated paragraph verifies that a breakable callout continues across pages without clipping its text or losing its colored rule. Nested content includes an inline equation $r_i=i/n$ and a reference to \cref{eq:mean}.
+
+Checkpoint 22. This deliberately repeated paragraph verifies that a breakable callout continues across pages without clipping its text or losing its colored rule. Nested content includes an inline equation $r_i=i/n$ and a reference to \cref{eq:mean}.
+
+Checkpoint 23. This deliberately repeated paragraph verifies that a breakable callout continues across pages without clipping its text or losing its colored rule. Nested content includes an inline equation $r_i=i/n$ and a reference to \cref{eq:mean}.
+
+Checkpoint 24. This deliberately repeated paragraph verifies that a breakable callout continues across pages without clipping its text or losing its colored rule. Nested content includes an inline equation $r_i=i/n$ and a reference to \cref{eq:mean}.
+\end{reportbox}
+\subsection{Continued algorithm}
+\begin{algorithm}[htbp]
+\caption{Filter and aggregate, first part.}\label{alg:continued}
+\begin{algorithmic}[1]
+\Require Sequence $x$\Ensure Sum of positive values
+\Function{PositiveSum}{$x$}
+\State $s\gets0$
+\ForAll{$v\in x$}
+\If{$v>0$}\State $s\gets s+v$\Else\State \textbf{continue}\EndIf
+\EndFor
+\algstore{positive}
+\end{algorithmic}
+\end{algorithm}
+% Force a real page boundary between stored and restored algorithm state.
+\clearpage
+\begin{algorithm}[htbp]
+\caption{Filter and aggregate, second part.}\label{alg:continued-second}
+\begin{algorithmic}[1]
+\algrestore{positive}
+\State \Return $s$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+\subsection{External and long listings}
+Inline code: \lstinline[language=Python]|sum(values)|.
+\lstinputlisting[language=Python,caption={Bundled executable example.},label={lst:external}]{examples/sample.py}
+\clearpage
+\begin{lstlisting}[language=Python,caption={Multipage listing with long-line wrapping.},label={lst:long}]
+checkpoint_01 = "Synthetic checkpoint 1: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_02 = "Synthetic checkpoint 2: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_03 = "Synthetic checkpoint 3: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_04 = "Synthetic checkpoint 4: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_05 = "Synthetic checkpoint 5: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_06 = "Synthetic checkpoint 6: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_07 = "Synthetic checkpoint 7: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_08 = "Synthetic checkpoint 8: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_09 = "Synthetic checkpoint 9: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_10 = "Synthetic checkpoint 10: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_11 = "Synthetic checkpoint 11: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_12 = "Synthetic checkpoint 12: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_13 = "Synthetic checkpoint 13: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_14 = "Synthetic checkpoint 14: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_15 = "Synthetic checkpoint 15: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_16 = "Synthetic checkpoint 16: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_17 = "Synthetic checkpoint 17: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_18 = "Synthetic checkpoint 18: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_19 = "Synthetic checkpoint 19: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_20 = "Synthetic checkpoint 20: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_21 = "Synthetic checkpoint 21: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_22 = "Synthetic checkpoint 22: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_23 = "Synthetic checkpoint 23: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_24 = "Synthetic checkpoint 24: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_25 = "Synthetic checkpoint 25: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_26 = "Synthetic checkpoint 26: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_27 = "Synthetic checkpoint 27: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_28 = "Synthetic checkpoint 28: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_29 = "Synthetic checkpoint 29: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_30 = "Synthetic checkpoint 30: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_31 = "Synthetic checkpoint 31: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_32 = "Synthetic checkpoint 32: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_33 = "Synthetic checkpoint 33: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_34 = "Synthetic checkpoint 34: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_35 = "Synthetic checkpoint 35: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_36 = "Synthetic checkpoint 36: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_37 = "Synthetic checkpoint 37: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_38 = "Synthetic checkpoint 38: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_39 = "Synthetic checkpoint 39: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_40 = "Synthetic checkpoint 40: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_41 = "Synthetic checkpoint 41: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_42 = "Synthetic checkpoint 42: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_43 = "Synthetic checkpoint 43: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_44 = "Synthetic checkpoint 44: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_45 = "Synthetic checkpoint 45: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_46 = "Synthetic checkpoint 46: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_47 = "Synthetic checkpoint 47: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_48 = "Synthetic checkpoint 48: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_49 = "Synthetic checkpoint 49: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_50 = "Synthetic checkpoint 50: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_51 = "Synthetic checkpoint 51: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_52 = "Synthetic checkpoint 52: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_53 = "Synthetic checkpoint 53: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_54 = "Synthetic checkpoint 54: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+checkpoint_55 = "Synthetic checkpoint 55: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
+\end{lstlisting}
+
+% References belong to the main report, before supplementary material.
 \bibliographystyle{acl_natbib}
 \bibliography{reference}
-
+\clearpage
+\appendix
+\section{Coverage and interpretation}
+\label{sec:appendix}
+The suite covers report-oriented LaTeX and Tempus commands. Separate
+fixtures exercise mutually exclusive title and option configurations.
+Appendix headings are explicit, while section references and contents
+use alphabetic numbering. Equations, tables, figures, algorithms, and
+listings receive appendix-scoped numbers.
+\subsection{Supplementary calculation}
+\label{sec:appendix-calculation}
+\begin{equation}\label{eq:appendix}
+  \sum_{i=1}^{n}i=\frac{n(n+1)}{2}.
+\end{equation}
+\begin{table}[htbp]\centering
+\caption{Supplementary values.}\label{tab:appendix}
+\begin{tabular}{@{}rr@{}}\reporttoprule
+$n$ & Sum\\\midrule 3 & 6\\4 & 10\\\bottomrule
+\end{tabular}
+\end{table}
+\begin{figure}[htbp]\centering
+\includegraphics[width=35mm]{examples/assets/mark.pdf}
+\caption{Supplementary test artwork.}\label{fig:appendix}
+\end{figure}
+\begin{algorithm}[htbp]
+\caption{Supplementary total.}\label{alg:appendix}
+\begin{algorithmic}[1]\State \Return $n(n+1)/2$\end{algorithmic}
+\end{algorithm}
+\begin{lstlisting}[language=Python,caption={Supplementary calculation.},label={lst:appendix}]
+def triangular(n):
+    return n * (n + 1) // 2
+\end{lstlisting}
+\clearpage
+\section{Additional validation notes}
+\label{sec:appendix-details}
+\Cref{sec:appendix} contains supplementary evidence. Its objects are
+\cref{eq:appendix,tab:appendix,fig:appendix,alg:appendix,lst:appendix}.
+The appendix subsection is \cref{sec:appendix-calculation}.
+\begin{equation}\label{eq:appendix-second}
+  \sum_{i=1}^{n}1=n.
+\end{equation}
+The counter restarts in each appendix: \cref{eq:appendix-second} is
+numbered B.1 rather than continuing the A series.
+\section*{Unnumbered closing note}
+\addcontentsline{toc}{section}{Unnumbered closing note}
+The missing-image panel is intentional; unresolved references, clipped
+content, and missing glyphs are not intentional.
 \end{document}

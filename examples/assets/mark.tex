@@ -1,0 +1,12 @@
+% Vector export of the same mark used by the default class banner.
+% Compile from the repository root; the export intentionally uses the class.
+\documentclass{tempusreport}
+\geometry{paperwidth=50mm,paperheight=30mm,margin=0mm}
+\pagestyle{empty}
+\begin{document}
+\begin{tikzpicture}[remember picture,overlay]
+  \node[inner sep=0pt] at (current page.center)
+    {\scalebox{3.333333}{\reportlogomark}};
+\end{tikzpicture}
+\null
+\end{document}

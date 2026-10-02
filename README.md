@@ -37,11 +37,50 @@ pdflatex -synctex=1 tempus-template.tex
 
 ## Working examples
 
-The example demonstrates an equation, decimal-aligned numeric table, placeholder
-figure, a colored TikZ ML training diagram, themed callouts, pseudocode,
-a Python listing, and citations.
-Its measurements are illustrative. Replace the content
-and image path with your own; a missing image produces a visible placeholder.
+The example is the v1.4.0 report stress suite. It demonstrates typography,
+heading levels, lists, footnotes, links, navigation indexes, citations,
+advanced mathematics and proofs, flexible and multipage tables, real and
+missing artwork, subfigures, an editable TikZ training diagram, all callout
+styles, continued pseudocode, inline/external code, and multipage listings.
+All measurements and artwork are synthetic. The missing workflow image and
+missing subfigure are intentional placeholder tests.
+
+Compile from the repository root so bundled artwork and source paths resolve.
+The example adds `mathtools`, `siunitx`, `longtable`, `amsthm`, and `cleveref`;
+these are content-specific dependencies, not new class requirements.
+
+### Reproducible stress checks
+
+With Python 3 and Tectonic installed, run:
+
+```sh
+python3 scripts/validate.py
+```
+
+The runner compiles the main example and eleven independent option fixtures
+in isolated directories under `.build/validation/`. It checks final logs for
+layout warnings, missing glyphs, unresolved references and citations, and
+checks that disabled optional features do not load their packages. It exits
+nonzero on failures and preserves PDFs, logs, and build output for review.
+Use `--only-cached` for offline checks after the initial package download;
+use `--update-example` to replace the tracked example PDF after all checks pass.
+Visual review is still required: clean logs do not guarantee good pagination.
+
+| Fixtures | Purpose |
+| --- | --- |
+| `default`, `banner`, `nobanner` | First-page banner behavior and subsequent-page styling |
+| `algorithms`, `listings`, `combined` | Independent optional-package activation |
+| `wide`, `empty`, `long-metadata` | Author layout, empty fields, and title/header wrapping |
+| `art-flat`, `art-cuboid` | Logo, partner helpers, mascot overlap, and abstract styling |
+
+Fixture sources live in `examples/`. The validation runner resolves class and
+asset paths for them automatically. Rebuild the bundled vector asset with
+`python3 scripts/validate.py --rebuild-assets --update-example` from the root.
+The isolated export uses the same `\reportlogomark` artwork as the class banner,
+so the default mark and bundled PDF remain consistent.
+
+See [CHANGELOG.md](CHANGELOG.md) for release changes and
+[the v1.5.0 roadmap](docs/ROADMAP-v1.5.0.md) for evidence and next-version plans.
 
 The class already includes `graphicx`, `amsmath`, `amssymb`, `booktabs`,
 `tabularx`, `array`, `enumitem`, `caption`, `subcaption`, TikZ, `tcolorbox`,
@@ -65,7 +104,7 @@ or **after** a figure/table's `\caption`. Use unique prefixes such as `sec:`,
 
 ### Scientific ML diagram
 
-The starter's `fig:ml-training` is an editable supervised training diagram:
+The example's `fig:ml-training` is an editable supervised training diagram:
 mini-batch inputs pass through an encoder and classifier to a cross-entropy
 loss, with target labels entering the loss separately. Solid arrows represent
 forward computation; dashed burgundy arrows represent gradient flow to the
@@ -112,7 +151,7 @@ Enable themed pseudocode and code blocks with class options:
 ```
 
 Use either option independently, or omit both for reports without these content
-types. The starter enables both to demonstrate them. The `algorithms` option
+types. The example enables both to demonstrate them. The `algorithms` option
 loads `algorithm` for floats and `algpseudocode` (from `algorithmicx`) for
 pseudocode. The `listings` option loads `listings` and selects the `tempus`
 style. These follow the standard [algorithmicx](https://ctan.org/pkg/algorithmicx)
@@ -160,17 +199,46 @@ def total(values):
 ```
 
 The `tempus` style provides a pale background, thin slate frame, navy keywords,
-teal comments, burgundy strings, line numbers, and wrapped long lines. Listings
+teal comments, burgundy strings, line numbers, and wrapped long lines. Code
+uses a dedicated Latin Modern monospace face at `\footnotesize` (8 pt with
+the default 10 pt body), preserving natural glyph widths and indentation. Listings
 can break across pages unless you request a float. No shell escape is required.
 Select the language per listing; no language is assumed globally.
 
 Use `\lstinputlisting[language=Python,caption={...},label={lst:source}]{file.py}`
 for external files, `\lstinline[language=Python]|sum(values)|` for inline code,
 and `\lstlistoflistings` for an index. Per-listing options override the defaults,
-for example `numbers=none` or `basicstyle=\ttfamily\footnotesize`.
+for example `numbers=none` or `basicstyle=\tempuscodefont\scriptsize`.
+`\tempuscodefont` selects the class code font when `listings` is enabled.
 Use `\lstset{...}` for document-wide changes, or `style=tempus` to reselect the
 class style. `listings` does not handle arbitrary Unicode source automatically;
 non-ASCII code needs an explicit character mapping or a suitable alternative.
+
+## Appendices
+
+Use standard `\appendix` once, followed by ordinary sections:
+
+```tex
+\appendix
+\section{Supplementary methods}
+\label{app:methods}
+\subsection{Derivation}
+\begin{equation}
+  a^2+b^2=c^2.
+  \label{eq:appendix-example}
+\end{equation}
+\section{Additional results}
+\label{app:results}
+```
+
+Headings display “Appendix A” and “Appendix B”; contents/bookmarks retain
+alphabetic section numbers, and subsections use A.1, A.2, and so on.
+Equations, figures, tables, algorithms, and listings restart within each
+appendix section (A.1, then B.1 in the next appendix). Main-report object
+numbering is unchanged. With `cleveref`, `\cref{app:methods}` says “appendix A”
+and `\Cref{app:methods}` says “Appendix A”. Without it, ordinary `\ref` works.
+Place the bibliography before `\appendix` when it belongs to the main report.
+The comprehensive example includes two appendices and references to their objects.
 
 ## Customize
 
@@ -186,12 +254,20 @@ title and authors:
 This option only affects the first-page banner; running headers and footers
 on subsequent pages retain their usual appearance.
 
-Default branding is `\reportbrand{Tempus}{Reports}`. Set optional metadata
+Default branding is `\reportbrand{Tempus}{Reports}`, paired with a native
+navy T mark and teal accent. `\reportlogomark` draws the mark in the current
+class palette and can be reused in TikZ figures or scaled with `\scalebox`.
+The default banner uses a 17 pt wordmark, tighter rule spacing, and a
+21 pt title with 25 pt line spacing. Set optional metadata
 with `\reporttype{...}`, `\reportlinks{...}`, and `\date{...}`; empty braces
 hide unwanted fields. Use `\reportauthorlayout{wide}` for full-width authors.
 
+Separate authors with `\author{Alice\and Bob}`; both compact and wide
+layouts render comma-separated names.
+
 Optional artwork: `\reportlogo{path}`, `\reportmascot[40mm]{path}`, and
-`\reportpartners{...}`. No artwork is needed by default.
+`\reportpartners{...}`. No artwork is needed by default. Optional title-artwork paths must exist;
+only `\reportimage` currently provides a missing-file placeholder.
 
 The class provides `reportbox`, `\reportimage{description}{path}` (with a
 missing-image placeholder), `\reportcontents`, and table helpers

@@ -3,7 +3,7 @@
 % Copyright (c) 2026 Lovart report template contributors.
 % Distributed under the MIT license; see LICENSE.
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{tempusreport}[2026/10/01 v1.3 Tempus Reports]
+\ProvidesClass{tempusreport}[2026/10/02 v1.4.0 Tempus Reports]
 \newif\iftempus@algorithms
 \newif\iftempus@listings
 \newif\iftempus@banner
@@ -71,6 +71,14 @@
 \fi
 \iftempus@listings
   \RequirePackage{listings}
+  % Keep code font selection local; do not replace the report's body fonts.
+  \ifPDFTeX
+    \newcommand{\tempuscodefont}{\fontfamily{lmtt}\selectfont}
+  \else
+    \newfontfamily\tempuscodefont{lmmonolt10}[Extension=.otf,
+      UprightFont=*-regular,BoldFont=*-bold,
+      ItalicFont=*-oblique,BoldItalicFont=*-boldoblique]
+  \fi
 \fi
 \RequirePackage[authoryear,round]{natbib}
 \RequirePackage{xurl}
@@ -87,7 +95,27 @@
 \clubpenalty=8000
 \widowpenalty=8000
 \displaywidowpenalty=8000
-\renewcommand\@seccntformat[1]{\textcolor{TempusAccent}{\csname the#1\endcsname}\quad}
+\newcommand{\tempus@sectionprefix}{}
+\renewcommand\@seccntformat[1]{%
+  \textcolor{TempusAccent}{%
+    \ifcsname tempus@#1prefix\endcsname
+      \csname tempus@#1prefix\endcsname
+    \fi
+    \csname the#1\endcsname}\quad}
+% Preserve article's alphabetic section reset, then scope object numbers.
+\AddToHook{cmd/appendix/after}{%
+  \renewcommand{\tempus@sectionprefix}{\appendixname\space}
+  \counterwithin{equation}{section}%
+  \counterwithin{figure}{section}%
+  \counterwithin{table}{section}%
+  \iftempus@algorithms\counterwithin{algorithm}{section}\fi
+  \iftempus@listings\counterwithin{lstlisting}{section}\fi
+  \@ifpackageloaded{cleveref}{%
+    \crefalias{section}{appendix}%
+    \crefname{appendix}{appendix}{appendices}%
+    \Crefname{appendix}{Appendix}{Appendices}%
+  }{}%
+}
 \renewcommand\section{\@startsection{section}{1}{\z@}
   {-2.6ex \@plus -.7ex \@minus -.2ex}{1ex \@plus .2ex}
   {\normalfont\sffamily\large\bfseries\color{TempusInk}}}
@@ -104,6 +132,15 @@
 \setcounter{tocdepth}{2}
 \setlist[itemize]{leftmargin=1.5em,itemsep=3pt,topsep=4pt,parsep=0pt}
 \setlist[enumerate]{leftmargin=1.8em,itemsep=3pt,topsep=4pt,parsep=0pt}
+% Native vector mark: a T crossbar/stem with an offset teal time tick.
+\newcommand{\reportlogomark}{%
+  \begin{tikzpicture}[x=1mm,y=1mm,baseline=1mm]
+    \path[use as bounding box] (0,0) rectangle (6,6);
+    \fill[TempusAccent] (0,4.5) rectangle (6,6);
+    \fill[TempusAccent] (2.25,0) rectangle (3.75,4.5);
+    \fill[TempusTeal] (4.5,0) rectangle (6,1.5);
+  \end{tikzpicture}%
+}
 \newcommand{\reportbrand}[2]{\gdef\tempus@lab{#1}\gdef\tempus@group{#2}}
 \newcommand{\reporttype}[1]{\gdef\tempus@type{#1}}
 \newcommand{\reportnumber}[1]{\gdef\tempus@number{#1}}
@@ -202,7 +239,7 @@
 \fi
 \iftempus@listings
   \lstdefinestyle{tempus}{
-    basicstyle=\ttfamily\small\color{TempusInk},
+    basicstyle=\tempuscodefont\footnotesize\color{TempusInk},
     keywordstyle=\color{TempusAccent}\bfseries,
     commentstyle=\color{TempusTeal}\itshape,
     stringstyle=\color{TempusBurgundy},
@@ -231,7 +268,9 @@
 \renewcommand{\bibfont}{\small}
 \newcommand{\tempus@authornames}{%
   \ifx\@author\@empty\else
-    {\normalfont\sffamily\normalsize\bfseries\color{TempusInk}\@author\par}
+    % article's \and opens tabular blocks; our author layout is paragraph-based.
+    {\def\and{\unskip,\space\ignorespaces}%
+      \normalfont\sffamily\normalsize\bfseries\color{TempusInk}\@author\par}
   \fi
 }
 \newcommand{\tempus@authorblock}{%
@@ -253,13 +292,13 @@
   \iftempus@banner
   \noindent\begin{minipage}[t]{.47\linewidth}
     \ifx\tempus@logo\@empty
-      {\sffamily\bfseries\fontsize{20}{24}\selectfont\color{TempusAccent}\tempus@lab\par}%
+      {\sffamily\bfseries\fontsize{17}{20}\selectfont\color{TempusAccent}\reportlogomark\hspace{3mm}\tempus@lab\par}%
     \else
-      \includegraphics[height=22pt]{\tempus@logo}\par
+      \includegraphics[height=18pt]{\tempus@logo}\par
     \fi
     \ifx\tempus@group\@empty\else
-      \vspace{3pt}{\sffamily\fontsize{8}{10}\selectfont\color{TempusMuted}%
-        \MakeUppercase{\tempus@group}\par}%
+      \vspace{2pt}{\sffamily\fontsize{7}{9}\selectfont\color{TempusMuted}%
+        \ifx\tempus@logo\@empty\hspace*{9mm}\fi\MakeUppercase{\tempus@group}\par}%
     \fi
   \end{minipage}\hfill
   \begin{minipage}[t]{.48\linewidth}\raggedleft
@@ -271,14 +310,14 @@
       \fi\par}
   \end{minipage}\par
   \ifx\tempus@partners\@empty\else
-    \vspace{12pt}\noindent\tempus@partners\par
+    \vspace{7pt}\noindent\tempus@partners\par
   \fi
-  \vspace{14pt}
-  {\color{TempusAccent}\hrule height 1.2pt}
-  \vspace{20pt}
+  \vspace{8pt}
+  {\color{TempusAccent}\hrule height .8pt}
+  \vspace{10pt}
   \fi
-  {\raggedright\sffamily\bfseries\color{TempusInk}\fontsize{24}{28}\selectfont\@title\par}
-  \vspace{12pt}
+  {\raggedright\sffamily\bfseries\color{TempusInk}\fontsize{21}{25}\selectfont\@title\par}
+  \vspace{9pt}
   \ifx\tempus@authorlayout\tempus@wideauthorlayout
     \tempus@authornames
     \vspace{4pt}
@@ -379,7 +418,7 @@
   }{%
     \begin{tikzpicture}
       \path[fill=TempusLight] (0,0) rectangle (\linewidth,.66\linewidth);
-      \node[align=center,text=TempusMuted,font=\sffamily\small]
+      \node[align=center,text width=.85\linewidth,text=TempusMuted,font=\sffamily\small]
         at (.5\linewidth,.33\linewidth) {#1\\[4pt]{\scriptsize Image placeholder}};
     \end{tikzpicture}%
   }%
