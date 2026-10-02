@@ -47,6 +47,19 @@ for name, forbidden in (("algorithms", "listings"), ("listings", "algpseudocode"
     if log.exists() and forbidden + ".sty" in log.read_text(errors="replace"):
         failures.append(name)
         print(f"FAIL {name}: {forbidden} loaded")
+# Verify appendix section and object numbering, including a second reset.
+aux_path = out / "tempus-template" / "tempus-template.aux"
+if aux_path.exists():
+    aux = aux_path.read_text(errors="replace")
+    expected = {"sec:appendix": "A", "sec:appendix-details": "B",
+                "eq:appendix": "A.1", "eq:appendix-second": "B.1",
+                "fig:appendix": "A.1", "tab:appendix": "A.1",
+                "alg:appendix": "A.1", "lst:appendix": "A.1"}
+    for key, number in expected.items():
+        if "\\newlabel{" + key + "}{{" + number + "}" not in aux:
+            failures.append("appendix numbering: " + key)
+    if "\\newlabel{sec:appendix@cref}{{[appendix]" not in aux:
+        failures.append("appendix reference name")
 if failures:
     raise SystemExit("Validation failed: " + ", ".join(failures))
 if args.update_example:

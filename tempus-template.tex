@@ -30,6 +30,8 @@ bundled artwork are synthetic; this is a typesetting stress test rather
 than an experimental report.
 \end{abstract}
 
+% Give the expanded contents its own page rather than a short continuation.
+\clearpage
 \reportcontents
 \listoffigures
 \listoftables
@@ -244,6 +246,7 @@ original example prose, rather than a quotation from an external source.
 Links: \href{https://example.org}{a named link}, and a wrapping URL:
 \url{https://example.org/reports/tempus/validation/a-long-path-with-several-components?configuration=stress-suite&version=1.4.0}.
 References: \cref{sec:text,eq:system,tab:flexible,fig:panels,thm:positive,alg:continued,lst:external}.
+Supplementary content is in \cref{sec:appendix,sec:appendix-details}.
 Citation variants: \citeauthor{vaswani2017attention},
 \citeyearpar{vaswani2017attention}, and
 \citep[see][Section 3]{vaswani2017attention}.
@@ -531,21 +534,55 @@ checkpoint_53 = "Synthetic checkpoint 53: this deliberately long string checks w
 checkpoint_54 = "Synthetic checkpoint 54: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
 checkpoint_55 = "Synthetic checkpoint 55: this deliberately long string checks wrapping without requiring shell escape or special source preprocessing; every character should stay inside the listing frame."
 \end{lstlisting}
+
+% References belong to the main report, before supplementary material.
+\bibliographystyle{acl_natbib}
+\bibliography{reference}
 \clearpage
 \appendix
 \section{Coverage and interpretation}
+\label{sec:appendix}
 The suite covers report-oriented LaTeX and Tempus commands. Separate
 fixtures exercise mutually exclusive title and option configurations.
-The default contents depth includes sections and subsections; this
-appendix should use alphabetic numbering in references and bookmarks.
-\label{sec:appendix}
+Appendix headings are explicit, while section references and contents
+use alphabetic numbering. Equations, tables, figures, algorithms, and
+listings receive appendix-scoped numbers.
+\subsection{Supplementary calculation}
+\label{sec:appendix-calculation}
+\begin{equation}\label{eq:appendix}
+  \sum_{i=1}^{n}i=\frac{n(n+1)}{2}.
+\end{equation}
+\begin{table}[htbp]\centering
+\caption{Supplementary values.}\label{tab:appendix}
+\begin{tabular}{@{}rr@{}}\reporttoprule
+$n$ & Sum\\\midrule 3 & 6\\4 & 10\\\bottomrule
+\end{tabular}
+\end{table}
+\begin{figure}[htbp]\centering
+\includegraphics[width=35mm]{examples/assets/mark.pdf}
+\caption{Supplementary test artwork.}\label{fig:appendix}
+\end{figure}
+\begin{algorithm}[htbp]
+\caption{Supplementary total.}\label{alg:appendix}
+\begin{algorithmic}[1]\State \Return $n(n+1)/2$\end{algorithmic}
+\end{algorithm}
+\begin{lstlisting}[language=Python,caption={Supplementary calculation.},label={lst:appendix}]
+def triangular(n):
+    return n * (n + 1) // 2
+\end{lstlisting}
+\clearpage
+\section{Additional validation notes}
+\label{sec:appendix-details}
+\Cref{sec:appendix} contains supplementary evidence. Its objects are
+\cref{eq:appendix,tab:appendix,fig:appendix,alg:appendix,lst:appendix}.
+The appendix subsection is \cref{sec:appendix-calculation}.
+\begin{equation}\label{eq:appendix-second}
+  \sum_{i=1}^{n}1=n.
+\end{equation}
+The counter restarts in each appendix: \cref{eq:appendix-second} is
+numbered B.1 rather than continuing the A series.
 \section*{Unnumbered closing note}
 \addcontentsline{toc}{section}{Unnumbered closing note}
 The missing-image panel is intentional; unresolved references, clipped
 content, and missing glyphs are not intentional.
-
-% BibTeX reads reference.bib; ACL style uses alphabetical author-year references.
-\bibliographystyle{acl_natbib}
-\bibliography{reference}
-
 \end{document}

@@ -198,17 +198,46 @@ def total(values):
 ```
 
 The `tempus` style provides a pale background, thin slate frame, navy keywords,
-teal comments, burgundy strings, line numbers, and wrapped long lines. Listings
+teal comments, burgundy strings, line numbers, and wrapped long lines. Code
+uses a dedicated Latin Modern monospace face at `\footnotesize` (8 pt with
+the default 10 pt body), preserving natural glyph widths and indentation. Listings
 can break across pages unless you request a float. No shell escape is required.
 Select the language per listing; no language is assumed globally.
 
 Use `\lstinputlisting[language=Python,caption={...},label={lst:source}]{file.py}`
 for external files, `\lstinline[language=Python]|sum(values)|` for inline code,
 and `\lstlistoflistings` for an index. Per-listing options override the defaults,
-for example `numbers=none` or `basicstyle=\ttfamily\footnotesize`.
+for example `numbers=none` or `basicstyle=\tempuscodefont\scriptsize`.
+`\tempuscodefont` selects the class code font when `listings` is enabled.
 Use `\lstset{...}` for document-wide changes, or `style=tempus` to reselect the
 class style. `listings` does not handle arbitrary Unicode source automatically;
 non-ASCII code needs an explicit character mapping or a suitable alternative.
+
+## Appendices
+
+Use standard `\appendix` once, followed by ordinary sections:
+
+```tex
+\appendix
+\section{Supplementary methods}
+\label{app:methods}
+\subsection{Derivation}
+\begin{equation}
+  a^2+b^2=c^2.
+  \label{eq:appendix-example}
+\end{equation}
+\section{Additional results}
+\label{app:results}
+```
+
+Headings display “Appendix A” and “Appendix B”; contents/bookmarks retain
+alphabetic section numbers, and subsections use A.1, A.2, and so on.
+Equations, figures, tables, algorithms, and listings restart within each
+appendix section (A.1, then B.1 in the next appendix). Main-report object
+numbering is unchanged. With `cleveref`, `\cref{app:methods}` says “appendix A”
+and `\Cref{app:methods}` says “Appendix A”. Without it, ordinary `\ref` works.
+Place the bibliography before `\appendix` when it belongs to the main report.
+The comprehensive example includes two appendices and references to their objects.
 
 ## Customize
 

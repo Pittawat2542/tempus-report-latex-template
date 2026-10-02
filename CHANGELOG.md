@@ -3,6 +3,26 @@
 All notable template changes are recorded here. Versions refer to the template
 class release; `\reportversion` remains author-controlled report metadata.
 
+## [Unreleased]
+
+### Added
+
+- Explicit appendix headings with alphabetic sections, appendix-scoped
+  equation/figure/table/algorithm/listing numbers, and cleveref appendix names.
+- Two supplementary appendices in the stress example and a default-option
+  appendix fixture; validation checks A.1/B.1 resets and reference types.
+
+### Changed
+
+- Listings use a dedicated Latin Modern monospace font at footnote size
+  instead of the wider Libertine monospace font at small size. Body fonts
+  remain unchanged; natural glyph widths and indentation are preserved.
+- The example bibliography precedes the supplementary appendices, and the
+  expanded contents starts on its own page.
+- All twelve documents pass Tectonic validation, including appendix counter
+  and reference checks; the regenerated example is seventeen pages. The code
+  font size and rendered pages were verified.
+
 ## [1.4.0] - 2026-10-02
 
 ### Added

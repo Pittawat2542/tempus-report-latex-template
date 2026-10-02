@@ -71,6 +71,14 @@
 \fi
 \iftempus@listings
   \RequirePackage{listings}
+  % Keep code font selection local; do not replace the report's body fonts.
+  \ifPDFTeX
+    \newcommand{\tempuscodefont}{\fontfamily{lmtt}\selectfont}
+  \else
+    \newfontfamily\tempuscodefont{lmmonolt10}[Extension=.otf,
+      UprightFont=*-regular,BoldFont=*-bold,
+      ItalicFont=*-oblique,BoldItalicFont=*-boldoblique]
+  \fi
 \fi
 \RequirePackage[authoryear,round]{natbib}
 \RequirePackage{xurl}
@@ -87,7 +95,27 @@
 \clubpenalty=8000
 \widowpenalty=8000
 \displaywidowpenalty=8000
-\renewcommand\@seccntformat[1]{\textcolor{TempusAccent}{\csname the#1\endcsname}\quad}
+\newcommand{\tempus@sectionprefix}{}
+\renewcommand\@seccntformat[1]{%
+  \textcolor{TempusAccent}{%
+    \ifcsname tempus@#1prefix\endcsname
+      \csname tempus@#1prefix\endcsname
+    \fi
+    \csname the#1\endcsname}\quad}
+% Preserve article's alphabetic section reset, then scope object numbers.
+\AddToHook{cmd/appendix/after}{%
+  \renewcommand{\tempus@sectionprefix}{\appendixname\space}
+  \counterwithin{equation}{section}%
+  \counterwithin{figure}{section}%
+  \counterwithin{table}{section}%
+  \iftempus@algorithms\counterwithin{algorithm}{section}\fi
+  \iftempus@listings\counterwithin{lstlisting}{section}\fi
+  \@ifpackageloaded{cleveref}{%
+    \crefalias{section}{appendix}%
+    \crefname{appendix}{appendix}{appendices}%
+    \Crefname{appendix}{Appendix}{Appendices}%
+  }{}%
+}
 \renewcommand\section{\@startsection{section}{1}{\z@}
   {-2.6ex \@plus -.7ex \@minus -.2ex}{1ex \@plus .2ex}
   {\normalfont\sffamily\large\bfseries\color{TempusInk}}}
@@ -202,7 +230,7 @@
 \fi
 \iftempus@listings
   \lstdefinestyle{tempus}{
-    basicstyle=\ttfamily\small\color{TempusInk},
+    basicstyle=\tempuscodefont\footnotesize\color{TempusInk},
     keywordstyle=\color{TempusAccent}\bfseries,
     commentstyle=\color{TempusTeal}\itshape,
     stringstyle=\color{TempusBurgundy},
