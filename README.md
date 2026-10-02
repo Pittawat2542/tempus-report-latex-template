@@ -37,11 +37,49 @@ pdflatex -synctex=1 tempus-template.tex
 
 ## Working examples
 
-The example demonstrates an equation, decimal-aligned numeric table, placeholder
-figure, a colored TikZ ML training diagram, themed callouts, pseudocode,
-a Python listing, and citations.
-Its measurements are illustrative. Replace the content
-and image path with your own; a missing image produces a visible placeholder.
+The example is the v1.4.0 report stress suite. It demonstrates typography,
+heading levels, lists, footnotes, links, navigation indexes, citations,
+advanced mathematics and proofs, flexible and multipage tables, real and
+missing artwork, subfigures, an editable TikZ training diagram, all callout
+styles, continued pseudocode, inline/external code, and multipage listings.
+All measurements and artwork are synthetic. The missing workflow image and
+missing subfigure are intentional placeholder tests.
+
+Compile from the repository root so bundled artwork and source paths resolve.
+The example adds `mathtools`, `siunitx`, `longtable`, `amsthm`, and `cleveref`;
+these are content-specific dependencies, not new class requirements.
+
+### Reproducible stress checks
+
+With Python 3 and Tectonic installed, run:
+
+```sh
+python3 scripts/validate.py
+```
+
+The runner compiles the main example and eleven independent option fixtures
+in isolated directories under `.build/validation/`. It checks final logs for
+layout warnings, missing glyphs, unresolved references and citations, and
+checks that disabled optional features do not load their packages. It exits
+nonzero on failures and preserves PDFs, logs, and build output for review.
+Use `--only-cached` for offline checks after the initial package download;
+use `--update-example` to replace the tracked example PDF after all checks pass.
+Visual review is still required: clean logs do not guarantee good pagination.
+
+| Fixtures | Purpose |
+| --- | --- |
+| `default`, `banner`, `nobanner` | First-page banner behavior and subsequent-page styling |
+| `algorithms`, `listings`, `combined` | Independent optional-package activation |
+| `wide`, `empty`, `long-metadata` | Author layout, empty fields, and title/header wrapping |
+| `art-flat`, `art-cuboid` | Logo, partner helpers, mascot overlap, and abstract styling |
+
+Fixture sources live in `examples/`. The validation runner resolves class and
+asset paths for them automatically. Rebuild the bundled vector test asset with
+`tectonic --outdir examples/assets examples/assets/mark.tex` from the root.
+It is original geometric test artwork, not a production logo.
+
+See [CHANGELOG.md](CHANGELOG.md) for release changes and
+[the v1.5.0 roadmap](docs/ROADMAP-v1.5.0.md) for evidence and next-version plans.
 
 The class already includes `graphicx`, `amsmath`, `amssymb`, `booktabs`,
 `tabularx`, `array`, `enumitem`, `caption`, `subcaption`, TikZ, `tcolorbox`,
@@ -65,7 +103,7 @@ or **after** a figure/table's `\caption`. Use unique prefixes such as `sec:`,
 
 ### Scientific ML diagram
 
-The starter's `fig:ml-training` is an editable supervised training diagram:
+The example's `fig:ml-training` is an editable supervised training diagram:
 mini-batch inputs pass through an encoder and classifier to a cross-entropy
 loss, with target labels entering the loss separately. Solid arrows represent
 forward computation; dashed burgundy arrows represent gradient flow to the
@@ -112,7 +150,7 @@ Enable themed pseudocode and code blocks with class options:
 ```
 
 Use either option independently, or omit both for reports without these content
-types. The starter enables both to demonstrate them. The `algorithms` option
+types. The example enables both to demonstrate them. The `algorithms` option
 loads `algorithm` for floats and `algpseudocode` (from `algorithmicx`) for
 pseudocode. The `listings` option loads `listings` and selects the `tempus`
 style. These follow the standard [algorithmicx](https://ctan.org/pkg/algorithmicx)
@@ -190,8 +228,12 @@ Default branding is `\reportbrand{Tempus}{Reports}`. Set optional metadata
 with `\reporttype{...}`, `\reportlinks{...}`, and `\date{...}`; empty braces
 hide unwanted fields. Use `\reportauthorlayout{wide}` for full-width authors.
 
+Separate authors with `\author{Alice\and Bob}`; both compact and wide
+layouts render comma-separated names.
+
 Optional artwork: `\reportlogo{path}`, `\reportmascot[40mm]{path}`, and
-`\reportpartners{...}`. No artwork is needed by default.
+`\reportpartners{...}`. No artwork is needed by default. Optional title-artwork paths must exist;
+only `\reportimage` currently provides a missing-file placeholder.
 
 The class provides `reportbox`, `\reportimage{description}{path}` (with a
 missing-image placeholder), `\reportcontents`, and table helpers
