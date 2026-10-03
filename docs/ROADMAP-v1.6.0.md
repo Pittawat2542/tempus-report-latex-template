@@ -1,6 +1,7 @@
 # Tempus v1.6.0: presentation deck template
 
-Planned October 3, 2026. This release follows the v1.5.0 report release gate;
+Planned October 3, 2026. Implementation candidate prepared October 3, 2026;
+the four-engine release gate remains open. This release follows the v1.5.0 report release gate;
 no presentation theme is implemented in v1.5.0. Both technical talks and
 executive updates are first-class use cases.
 
@@ -108,3 +109,21 @@ Retain an explicit engine/font visual-review record. Tagged PDF, arbitrary
 Unicode listings, PowerPoint export, and automatic report-to-slide conversion
 are outside this release. Tagged output and expanded Unicode support remain
 separate evidence-gated investigations from the report roadmap.
+
+
+## Implementation status (October 3, 2026)
+
+- [x] Capture all 22 report baselines and extract `tempusdesign.sty`; all report
+  page text/renders remain equivalent under Tectonic.
+- [x] Implement the ordinary Beamer theme and minimal starter.
+- [x] Demonstrate every technical/executive layout in the comprehensive deck.
+- [x] Extend the pinned validator and CI matrix with 11 deck documents/variants.
+- [x] Document copying/build workflows, generate the canonical deck PDF after
+  validation, and record evidence in the changelog.
+- [x] Review every layout at both aspect ratios with Tectonic.
+- [ ] Complete the prior v1.5.0 gate and fresh v1.6.0 four-engine CI matrix.
+- [ ] Review fonts/layouts and handouts from each TeX Live engine, then declare
+  and publish the release.
+
+See [VALIDATION-v1.6.0.md](VALIDATION-v1.6.0.md) for counts, preservation evidence,
+font review, reproduction commands, and the remaining gates.

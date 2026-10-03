@@ -3,6 +3,43 @@
 All notable template changes are recorded here. Versions refer to the template
 class release; `\reportversion` remains author-controlled report metadata.
 
+## [1.6.0] - Unreleased release candidate
+
+### Added
+
+- Ordinary Beamer `Tempus` theme, minimal deck starter, and comprehensive
+  technical/executive deck with 15 frames (17 overlay pages), plus its PDF.
+- Title/closing, agenda/explicit divider, semantic blocks, comparison, editable
+  diagram/plot, equation/results, image/source, code, KPI, timeline,
+  recommendation, and author-year ACL/BibTeX reference examples.
+- Shared `tempusdesign.sty` for the existing palette, packaged fonts, optional
+  code font, and vector mark. Both template distributions require this file.
+- Standard 16:9/4:3 and handout support, wrapping 18 pt frame titles, 22 pt
+  title-slide titles, 8 mm side margins, quiet footer, and opt-in burgundy
+  `importantblock`. Optional bounded artwork recovery follows graphicx paths.
+- Eleven deck documents/variants in the four-engine validator, checking
+  geometry, exact counts, reveal order, handouts, fonts/code size, links,
+  optional-package isolation, artwork warnings, and rendered palette overrides.
+- Canonical `--update-deck` publishing after the whole suite passes;
+  `--check-example` now checks both comprehensive PDFs for text/render drift.
+- Copying/build instructions and explicit engine/font/layout review record in
+  `docs/VALIDATION-v1.6.0.md`.
+
+### Validation and release gate
+
+- Tectonic 0.17.0 passes all 33 documents; thirteen validator unit tests pass.
+  Logs have no unexpected warnings, overflow, missing glyphs, or unresolved
+  citations/references. Both tracked PDFs pass canonical text/render drift
+  checks. The missing-art fixture has one exact expected warning.
+- All 22 report PDFs retain equivalent page text and 72 dpi renders after
+  extraction. The existing tracked report PDF is unchanged.
+- Comprehensive layouts, both starters, and control fixtures visually reviewed
+  at both aspect ratios. Plot labels and comparison headings refined during
+  review. Code font resources and minimum 8 pt size checked in generated PDFs.
+- Fresh pdfLaTeX, XeLaTeX, and LuaLaTeX CI builds and engine/font/handout visual
+  review remain pending, together with the prior v1.5.0 gate. This candidate
+  does not declare a completed release or publication date.
+
 ## [1.5.0] - Unreleased release candidate
 
 ### Added

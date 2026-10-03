@@ -1,15 +1,15 @@
 # Tempus
 
-A standalone A4 LaTeX report template with slate navy (`#1E3A5F`),
+A standalone A4 LaTeX report and Beamer presentation template with slate navy (`#1E3A5F`),
 Helvetica-style headings, Libertine body text, and an editorial first page.
 
 ## Use
 
-For a new report, copy `tempus-starter.tex` with `tempusreport.cls`,
+For a new report, copy `tempus-starter.tex` with `tempusreport.cls`, `tempusdesign.sty`,
 `acl_natbib.bst`, and `reference.bib`, then run `tectonic tempus-starter.tex`.
 Use the comprehensive example below to explore features.
 
-Keep `tempusreport.cls`, `acl_natbib.bst`, and `reference.bib` beside
+Keep `tempusreport.cls`, `tempusdesign.sty`, `acl_natbib.bst`, and `reference.bib` beside
 `tempus-template.tex`.
 Edit the example's title,
 author, affiliation, short title, report number, version, and content.
@@ -39,6 +39,76 @@ pdflatex -synctex=1 tempus-template.tex
 pdflatex -synctex=1 tempus-template.tex
 ```
 
+## Presentations
+
+For a new deck, copy `tempus-deck-starter.tex`, `beamerthemeTempus.sty`, and
+`tempusdesign.sty` into one directory. Include `LICENSE` when redistributing.
+Compile with `tectonic tempus-deck-starter.tex` or
+`latexmk -pdf tempus-deck-starter.tex`.
+
+Use ordinary Beamer metadata and content:
+
+```tex
+\documentclass[11pt,aspectratio=169]{beamer}
+\usetheme{Tempus}
+\title[Short footer title]{Your presentation}
+\author{Your Name}
+\institute{Your Institute}
+\date{Your date}
+```
+
+Change `aspectratio=169` to `aspectratio=43` for 4:3; add `handout` to the
+class options to collapse overlays. The theme does not select a page size
+or add section frames. Write transitions explicitly. These follow the
+[standard Beamer interfaces](https://tug.ctan.org/macros/latex/contrib/beamer/doc/beameruserguide.pdf).
+Use `[plain]` frames for title and closing slides to suppress the footer.
+Use `\tableofcontents`, `columns`, overlay specifications such as `<2->`,
+mathematics, and bibliography commands normally.
+
+The comprehensive `tempus-deck.tex` demonstrates technical results, editable
+TikZ diagrams and plots, an image with descriptive source text, code, citations,
+comparison, KPI, timeline, and recommendation layouts. Its measurements are
+synthetic. Copy the two style files, `acl_natbib.bst`, `reference.bib`, and
+`examples/assets/mark.pdf` with it, retaining that asset path, then run
+`tectonic tempus-deck.tex`. TeX Live builds use `latexmk -pdf`, or an initial
+LaTeX pass, `bibtex tempus-deck`, and further LaTeX passes as for reports.
+The deck explicitly loads `booktabs` and author-year `natbib`, and suppresses
+its extra bibliography section because the frame supplies the heading. The theme
+leaves content and bibliography packages to authors.
+
+Standard `block`, `exampleblock`, and `alertblock` mean navy note, teal tip,
+and amber warning. The opt-in `importantblock` is burgundy and accepts the
+same overlay specification as `block`. Give every block a meaningful title.
+Colors, Helvetica-compatible headings, Libertine body fonts, and the vector
+`\reportlogomark` come from `tempusdesign.sty` for both templates. Named
+`\definecolor` overrides after class/theme loading continue to work.
+The shared package preserves the report's 0.94 heading-font scale; its explicit
+`slides` option uses 1.0. Fonts come from TeX packages, with no system install.
+
+Enable code with `\usetheme[listings]{Tempus}` and use `[fragile]` frames.
+The `tempus-deck` listings style uses a local Latin Modern code font at 8 pt.
+Neither the theme nor the shared package loads listings unless requested
+(the shared `code` option selects only the font). No shell escape is needed.
+Arbitrary Unicode code needs explicit listings mappings. Keep 11 pt body text,
+18 pt frame titles, and 22 pt title-slide titles; split crowded frames and
+long code rather than shrinking them. Long titles wrap at their original size.
+Review both aspect ratios when adapting content.
+
+Optional artwork uses standard `\titlegraphic{...}`. Within it,
+`\tempusartwork{path}` resolves `\graphicspath` and implicit extensions,
+fits existing art into 25 by 10 mm, and warns with a bounded placeholder
+if absent. Omit `\titlegraphic` when artwork is unnecessary. Ordinary
+`\includegraphics` remains available for required content images.
+Contact links on closing frames use standard `\href`.
+
+The validator generates full-deck 4:3 and handout variants from
+`examples/decks/variants.json`, so all layouts use the same canonical content.
+It checks page geometry, exact frame/overlay counts, handout content, font
+presence, citations/links, optional-package isolation, artwork warnings, long
+titles, and rendered color overrides. The pinned CI matrix runs reports and
+decks on Tectonic, pdfLaTeX, XeLaTeX, and LuaLaTeX; `--check-example` checks both
+canonical PDFs. Generated evidence remains under `.build/validation/<engine>`.
+
 ## Working examples
 
 The example is the v1.5.0 report stress suite. It demonstrates typography,
@@ -63,8 +133,8 @@ python3 scripts/validate.py
 python3 -m unittest discover -s scripts -p 'test_*.py'
 ```
 
-The runner compiles the comprehensive example, minimal starter, and twenty
-option/regression fixtures into `.build/validation/<engine>/`. It rejects
+The runner compiles both comprehensive examples, both starters, twenty report
+fixtures, and nine deck variants/fixtures into `.build/validation/<engine>/`. It rejects
 layout warnings, missing glyphs, unresolved references/citations, and unexpected
 class/package warnings. Negative fixtures declare exact expected class warnings
 in `examples/expected-warnings.json`. It also checks optional-package activation,
@@ -78,8 +148,9 @@ TeX Live installation and BibTeX. These engines run an initial LaTeX pass,
 BibTeX when needed, and three further LaTeX passes. All builds remain
 shell-escape-free.
 
-`--update-example` replaces the tracked PDF only after the whole suite passes.
-`--check-example` compares the tracked and regenerated PDF's page text and
+`--update-example` replaces the tracked report PDF only after the whole suite
+passes; `--update-deck` does the same for the comprehensive deck PDF.
+`--check-example` compares the tracked and regenerated PDFs' page text and
 72 dpi renders, ignoring volatile PDF metadata. It requires Poppler's
 `pdftoppm`, and tolerates at most 0.1% color-channel differences exceeding
 16/255 for rasterizer antialiasing. Canonical PDF updates/drift checks and asset
@@ -87,8 +158,9 @@ exports use Tectonic only. Visual review remains required.
 
 CI runs Tectonic 0.17.0 (download checksum pinned) and all three engines from
 an immutable TeX Live 2026 image, retaining evidence for 30 days. Local Tectonic
-success does not complete the four-engine release gate. The 1.5.0 implementation
-is a release candidate until the matrix and cross-engine font review pass.
+success does not complete the four-engine release gate. Versions 1.5.0 and
+1.6.0 remain release candidates until their matrix and font review gates pass.
+See [the 1.6.0 visual-review record](docs/VALIDATION-v1.6.0.md).
 
 | Fixtures | Purpose |
 | --- | --- |
