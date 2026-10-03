@@ -1,0 +1,113 @@
+% Tempus Beamer theme. Distributed under the MIT license; see LICENSE.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerthemeTempus}[2026/10/03 v1.6.0 Tempus presentations]
+\newif\iftempusdeck@listings
+\DeclareOptionBeamer{listings}{\tempusdeck@listingstrue}
+\ProcessOptionsBeamer
+\iftempusdeck@listings\PassOptionsToPackage{code}{tempusdesign}\fi
+\RequirePackage[slides]{tempusdesign}
+\usefonttheme{professionalfonts}
+\usefonttheme{serif}
+\setbeamersize{text margin left=8mm,text margin right=8mm}
+\setbeamercolor{normal text}{fg=TempusInk,bg=white}
+\setbeamercolor{structure}{fg=TempusAccent}
+\setbeamercolor{frametitle}{fg=TempusAccent,bg=white}
+\setbeamercolor{title}{fg=TempusAccent,bg=white}
+\setbeamercolor{footline}{fg=TempusMuted,bg=white}
+\setbeamercolor{block title}{fg=TempusAccent,bg=TempusLight}
+\setbeamercolor{block body}{fg=TempusInk,bg=TempusLight}
+\setbeamercolor{block title example}{fg=TempusTeal,bg=TempusTealLight}
+\setbeamercolor{block body example}{fg=TempusInk,bg=TempusTealLight}
+\setbeamercolor{block title alerted}{fg=TempusAmber,bg=TempusAmberLight}
+\setbeamercolor{block body alerted}{fg=TempusInk,bg=TempusAmberLight}
+\setbeamercolor{alerted text}{fg=TempusBurgundy}
+\setbeamerfont{normal text}{family=\rmfamily}
+\setbeamerfont{title}{family=\sffamily,series=\bfseries,size=\fontsize{22}{26}}
+\setbeamerfont{frametitle}{family=\sffamily,series=\bfseries,size=\fontsize{18}{21}}
+\setbeamerfont{framesubtitle}{family=\sffamily,size=\small}
+\setbeamerfont{subtitle}{family=\sffamily,size=\normalsize}
+\setbeamerfont{author}{family=\rmfamily,size=\normalsize}
+\setbeamerfont{institute}{family=\rmfamily,size=\small}
+\setbeamerfont{date}{family=\sffamily,size=\small}
+\setbeamerfont{block title}{family=\sffamily,series=\bfseries,size=\normalsize}
+\setbeamerfont{footline}{family=\sffamily,size=\fontsize{8}{9}}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{blocks}[default]
+\setbeamertemplate{itemize items}[square]
+\setbeamertemplate{enumerate items}[default]
+\setbeamertemplate{bibliography item}{}
+\setbeamerfont{bibliography entry author}{size=\small}
+\setbeamerfont{bibliography entry title}{size=\small}
+\setbeamerfont{bibliography entry location}{size=\small}
+\setbeamerfont{bibliography entry note}{size=\small}
+\setbeamertemplate{frametitle}{%
+  \vspace{3mm}%
+  \begin{beamercolorbox}[wd=\linewidth,sep=0pt]{frametitle}%
+    \usebeamerfont{frametitle}\strut\insertframetitle\strut\par
+    \ifx\insertframesubtitle\@empty\else
+      {\usebeamerfont{framesubtitle}\insertframesubtitle\par}%
+    \fi
+    \vspace{1.5mm}{\color{TempusAccent}\hrule height .4pt}%
+  \end{beamercolorbox}\vspace{1mm}%
+}
+\setbeamertemplate{footline}{%
+  \begin{beamercolorbox}[wd=\paperwidth,leftskip=8mm,rightskip=8mm,sep=0pt]{footline}%
+    \usebeamerfont{footline}%
+    \begin{minipage}[b]{\dimexpr\paperwidth-24mm\relax}%
+      \raggedright\insertshorttitle
+    \end{minipage}\hfill\insertframenumber\par\vspace{2mm}%
+  \end{beamercolorbox}%
+}
+% A plain frame suppresses the footer; use it for title and closing slides.
+\setbeamertemplate{title page}{%
+  \reportlogomark\hspace{2mm}{\sffamily\bfseries\color{TempusAccent}Tempus}\par
+  \vspace{5mm}%
+  {\usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle\par}%
+  \ifx\insertsubtitle\@empty\else
+    \vspace{2mm}{\usebeamerfont{subtitle}\insertsubtitle\par}%
+  \fi
+  \vspace{4mm}%
+  {\usebeamerfont{author}\insertauthor\par}%
+  {\usebeamerfont{institute}\insertinstitute\par}%
+  \vspace{2mm}{\usebeamerfont{date}\insertdate\par}%
+  \ifx\inserttitlegraphic\@empty\else\vspace{3mm}\inserttitlegraphic\par\fi
+}
+% Explicit opt-in semantic block; standard blocks retain their normal APIs.
+\newenvironment<>{importantblock}[1]{%
+  \begingroup
+  \setbeamercolor{block title}{fg=TempusBurgundy,bg=TempusBurgundyLight}%
+  \setbeamercolor{block body}{fg=TempusInk,bg=TempusBurgundyLight}%
+  \begin{block}#2{#1}%
+}{\end{block}\endgroup}
+% Optional titlegraphic artwork: graphicx search paths and implicit extensions.
+\newif\iftempusdeck@artfound
+\newcommand{\tempusartwork}[1]{%
+  \begingroup
+  \tempusdeck@artfoundfalse\let\input@path\Ginput@path
+  \IfFileExists{#1}{\tempusdeck@artfoundtrue}{%
+    \@for\tempusdeck@ext:=\Gin@extensions\do{%
+      \IfFileExists{#1\tempusdeck@ext}{\tempusdeck@artfoundtrue}{}%
+    }%
+  }%
+  \iftempusdeck@artfound
+    \includegraphics[width=25mm,height=10mm,keepaspectratio]{#1}%
+  \else
+    \PackageWarningNoLine{beamerthemeTempus}{Missing artwork '#1'}%
+    {\setlength{\fboxsep}{0pt}\color{TempusRule}%
+      \fbox{\parbox[c][9mm][c]{24mm}{\centering\color{TempusMuted}%
+        \sffamily\fontsize{8}{9}\selectfont Artwork unavailable}}}%
+  \fi\endgroup
+}
+\iftempusdeck@listings
+  \RequirePackage{listings}
+  \lstdefinestyle{tempus-deck}{%
+    basicstyle=\tempuscodefont\fontsize{8}{10}\selectfont,
+    keywordstyle=\color{TempusAccent}\bfseries,
+    commentstyle=\color{TempusTeal},stringstyle=\color{TempusBurgundy},
+    backgroundcolor=\color{TempusCodeBackground},
+    frame=single,rulecolor=\color{TempusRule},framerule=.4pt,
+    breaklines=true,columns=fullflexible,keepspaces=true,
+    showstringspaces=false,tabsize=4,aboveskip=3mm,belowskip=2mm}
+  \lstset{style=tempus-deck}
+\fi
+\mode<all>

@@ -1,0 +1,59 @@
+% Derived from the Lovart report template.
+% Copyright (c) 2026 Pittawat Taveekitworachai.
+% Copyright (c) 2026 Lovart report template contributors.
+% Shared Tempus design. Distributed under the MIT license; see LICENSE.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tempusdesign}[2026/10/03 v1.6.0 Shared Tempus design]
+\newif\iftempusdesign@code
+\def\tempusdesign@sansscale{0.94}
+\DeclareOption{code}{\tempusdesign@codetrue}
+\DeclareOption{slides}{\def\tempusdesign@sansscale{1.0}}
+\ProcessOptions\relax
+\RequirePackage[T1]{fontenc}
+\RequirePackage{libertine}
+\RequirePackage{iftex}
+\ifPDFTeX
+  \RequirePackage[scaled=\tempusdesign@sansscale]{helvet}
+\else
+  % Helvetica-compatible OpenType fonts for XeTeX/Tectonic and LuaTeX.
+  \setsansfont{texgyreheros}[Extension=.otf,Scale=\tempusdesign@sansscale,
+    UprightFont=*-regular,BoldFont=*-bold,
+    ItalicFont=*-italic,BoldItalicFont=*-bolditalic]
+\fi
+\RequirePackage{xcolor}
+\definecolor{TempusInk}{HTML}{17212B}
+\definecolor{TempusPaper}{HTML}{F0F4F8}
+\definecolor{TempusAccent}{HTML}{1E3A5F}
+\definecolor{TempusLight}{HTML}{F0F4F8}
+\definecolor{TempusMuted}{HTML}{596979}
+\definecolor{TempusRule}{HTML}{CBD5E1}
+\definecolor{TempusSage}{HTML}{93A9BF}
+\definecolor{TempusSageDark}{HTML}{536D87}
+% Supporting hues: dark enough for text on the corresponding pale surfaces.
+\definecolor{TempusTeal}{HTML}{27665E}
+\definecolor{TempusTealLight}{HTML}{EDF5F2}
+\definecolor{TempusAmber}{HTML}{885A20}
+\definecolor{TempusAmberLight}{HTML}{FBF4E8}
+\definecolor{TempusBurgundy}{HTML}{8A4053}
+\definecolor{TempusBurgundyLight}{HTML}{F8EFF2}
+\definecolor{TempusCodeBackground}{HTML}{F5F7FA}
+\RequirePackage{tikz}
+% Native vector mark: a T crossbar/stem with an offset teal time tick.
+\newcommand{\reportlogomark}{%
+  \begin{tikzpicture}[x=1mm,y=1mm,baseline=1mm]
+    \path[use as bounding box] (0,0) rectangle (6,6);
+    \fill[TempusAccent] (0,4.5) rectangle (6,6);
+    \fill[TempusAccent] (2.25,0) rectangle (3.75,4.5);
+    \fill[TempusTeal] (4.5,0) rectangle (6,1.5);
+  \end{tikzpicture}%
+}
+\iftempusdesign@code
+  % Keep code font selection local; do not replace the report's body fonts.
+  \ifPDFTeX
+    \newcommand{\tempuscodefont}{\fontfamily{lmtt}\selectfont}
+  \else
+    \newfontfamily\tempuscodefont{lmmonolt10}[Extension=.otf,
+      UprightFont=*-regular,BoldFont=*-bold,
+      ItalicFont=*-oblique,BoldItalicFont=*-boldoblique]
+  \fi
+\fi

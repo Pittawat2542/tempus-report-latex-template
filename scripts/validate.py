@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build isolated report fixtures and inspect logs, navigation, and pagination."""
+"""Build isolated report/deck fixtures and inspect logs, navigation, and pagination."""
 import argparse
 from collections import Counter
 import json
@@ -17,6 +17,8 @@ except ImportError:
 if not __debug__:
     raise SystemExit('Validation requires Python assertions; do not use -O or PYTHONOPTIMIZE')
 
+from deck_validation import check_deck, deck_sources, theme_warnings
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -30,7 +32,7 @@ def build(source, work, engine, cached, staged_asset=None):
     if work.exists():
         shutil.rmtree(work)
     work.mkdir(parents=True)
-    for filename in ('tempusreport.cls', 'acl_natbib.bst', 'reference.bib'):
+    for filename in ('tempusreport.cls', 'tempusdesign.sty', 'beamerthemeTempus.sty', 'acl_natbib.bst', 'reference.bib'):
         shutil.copy2(ROOT / filename, work / filename)
     shutil.copytree(ROOT / 'examples', work / 'examples')
     if staged_asset is not None:
@@ -203,12 +205,13 @@ def main():
     parser.add_argument('--only-cached', action='store_true')
     parser.add_argument('--rebuild-assets', action='store_true')
     parser.add_argument('--update-example', action='store_true')
+    parser.add_argument('--update-deck', action='store_true')
     parser.add_argument('--check-example', action='store_true')
     args = parser.parse_args()
-    if (args.update_example or args.check_example or args.rebuild_assets) and args.engine != 'tectonic':
+    if (args.update_example or args.update_deck or args.check_example or args.rebuild_assets) and args.engine != 'tectonic':
         parser.error('asset/PDF publishing and drift checks require the canonical Tectonic engine')
-    if args.update_example and args.check_example:
-        parser.error('choose either --update-example or --check-example')
+    if (args.update_example or args.update_deck) and args.check_example:
+        parser.error('choose PDF updates or --check-example')
     if args.only_cached and args.engine != 'tectonic':
         parser.error('--only-cached is specific to Tectonic')
     if not shutil.which(args.engine):
@@ -227,6 +230,7 @@ def main():
     (out / 'toolchain.txt').write_text(toolchain)
     expected = json.loads((ROOT / 'examples' / 'expected-warnings.json').read_text())
     sources = [ROOT / 'tempus-template.tex', ROOT / 'tempus-starter.tex', *sorted((ROOT / 'examples').glob('*.tex'))]
+    sources.extend(deck_sources(ROOT, out))
     failures, report = [], {}
     if args.rebuild_assets:
         sources.insert(0, ROOT / 'examples' / 'assets' / 'mark.tex')
@@ -238,7 +242,11 @@ def main():
             code = build(source, work, args.engine, args.only_cached, staged_asset)
             assert code == 0, 'compilation failed; see build-output.txt'
             log = (work / (name + '.log')).read_text(errors='replace')
-            issues = re.findall(r'^.*(?:Overfull|Underfull|undefined|multiply defined|Missing character|LaTeX Warning|Package .* Warning|Class (?!tempusreport).* Warning).*$', log, re.M)
+            is_deck = r'{beamer}' in source.read_text()
+            expected_theme = ["Missing artwork 'absent-institution'"] if name == 'deck-artwork' else []
+            assert Counter(theme_warnings(log)) == Counter(expected_theme), 'unexpected theme warnings'
+            checked_log = re.sub(r'^Package beamerthemeTempus Warning: .*\n', '', log, flags=re.M)
+            issues = re.findall(r'^.*(?:Overfull|Underfull|undefined|multiply defined|Missing character|LaTeX Warning|Package .* Warning|Class (?!tempusreport).* Warning).*$', checked_log, re.M)
             assert not issues, '\n'.join(issues)
             actual = class_warnings(log)
             assert Counter(actual) == Counter(expected.get(name, [])), f'class warnings: {actual}; expected {expected.get(name, [])}'
@@ -247,14 +255,21 @@ def main():
             for option, packages in [('algorithms', ['algorithm', 'algpseudocode']), ('listings', ['listings', 'needspace'])]:
                 for package in packages:
                     loaded = bool(re.search(r'(?:^|[/\s(])' + package + r'\.sty', log))
-                    assert loaded == (option in options), f'optional package activation: {package}'
+                    assert loaded == ((option in options) if not is_deck else (package == 'listings' and r'\usetheme[listings]' in source.read_text())), f'optional package activation: {package}'
+            if is_deck:
+                for package in ('enumitem', 'fancyhdr', 'caption', 'subcaption', 'tcolorbox', 'needspace'):
+                    assert not re.search(r'(?:^|[/\s(])' + package + r'\.sty', log), f'report package leaked into Beamer: {package}'
+                assert 'tempusreport.cls' not in log, 'deck imported the report class'
             if name != 'mark':
                 pages, evidence = inspect_pdf(work / (name + '.pdf'))
                 # Empty-author reports intentionally omit author metadata.
                 titles = re.findall(r'\\title\{([^{}]*)\}', source.read_text())
                 if titles:
                     assert evidence['title'] == titles[-1], 'PDF title does not match source metadata'
-                check_behavior(name, work, pages, evidence)
+                if is_deck:
+                    check_deck(source, work, pages, evidence)
+                else:
+                    check_behavior(name, work, pages, evidence)
                 report[name] = evidence
             if name == 'mark':
                 staged_asset = work / 'mark.pdf'
@@ -269,11 +284,14 @@ def main():
         raise SystemExit('Validation failed: ' + ', '.join(failures))
     if args.check_example:
         rendered_equal(ROOT / 'tempus-template.pdf', out / 'tempus-template' / 'tempus-template.pdf', out)
-        print('PASS tracked example text/render drift')
+        rendered_equal(ROOT / 'tempus-deck.pdf', out / 'tempus-deck' / 'tempus-deck.pdf', out / 'tempus-deck')
+        print('PASS tracked report/deck text/render drift')
     if args.rebuild_assets:
         shutil.copy2(out / 'mark' / 'mark.pdf', ROOT / 'examples' / 'assets' / 'mark.pdf')
     if args.update_example:
         shutil.copy2(out / 'tempus-template' / 'tempus-template.pdf', ROOT / 'tempus-template.pdf')
+    if args.update_deck:
+        shutil.copy2(out / 'tempus-deck' / 'tempus-deck.pdf', ROOT / 'tempus-deck.pdf')
     print(f'Validated {len(sources)} documents with {args.engine}. Evidence: {out}')
 
 

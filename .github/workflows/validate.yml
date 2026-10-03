@@ -1,4 +1,4 @@
-name: Report validation
+name: Report and deck validation
 on:
   push:
   pull_request:
@@ -43,7 +43,7 @@ jobs:
           echo "TEMPUS_WORKSPACE=$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
       - name: Test release evidence checks
         run: .build/venv/bin/python -m unittest discover -s scripts -p 'test_*.py'
-      - name: Validate reports and canonical PDF
+      - name: Validate reports, decks, and canonical PDFs
         env:
           TEMPUS_ENGINE: ${{ matrix.engine }}
         run: |

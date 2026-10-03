@@ -3,7 +3,7 @@
 % Copyright (c) 2026 Lovart report template contributors.
 % Distributed under the MIT license; see LICENSE.
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{tempusreport}[2026/10/03 v1.5.0 Tempus Reports]
+\ProvidesClass{tempusreport}[2026/10/03 v1.6.0 Tempus Reports]
 \newif\iftempus@algorithms
 \newif\iftempus@listings
 \newif\iftempus@banner
@@ -23,36 +23,11 @@
 \edef\tempus@filteroptions{%
   \noexpand\@removeelement{listings}{\@classoptionslist}\noexpand\@classoptionslist}
 \tempus@filteroptions
-\RequirePackage[T1]{fontenc}
-\RequirePackage{libertine}
-\RequirePackage{iftex}
-\ifPDFTeX
-  \RequirePackage[scaled=0.94]{helvet}
-\else
-  % Helvetica-compatible OpenType fonts for XeTeX/Tectonic and LuaTeX.
-  \setsansfont{texgyreheros}[Extension=.otf,Scale=0.94,
-    UprightFont=*-regular,BoldFont=*-bold,
-    ItalicFont=*-italic,BoldItalicFont=*-bolditalic]
-\fi
+\iftempus@listings\PassOptionsToPackage{code}{tempusdesign}\fi
+\RequirePackage[table]{xcolor}
+\RequirePackage{tempusdesign}
 \RequirePackage[margin=21mm,top=20mm,bottom=22mm,headheight=19pt,
   headsep=11pt,footskip=24pt]{geometry}
-\RequirePackage[table]{xcolor}
-\definecolor{TempusInk}{HTML}{17212B}
-\definecolor{TempusPaper}{HTML}{F0F4F8}
-\definecolor{TempusAccent}{HTML}{1E3A5F}
-\definecolor{TempusLight}{HTML}{F0F4F8}
-\definecolor{TempusMuted}{HTML}{596979}
-\definecolor{TempusRule}{HTML}{CBD5E1}
-\definecolor{TempusSage}{HTML}{93A9BF}
-\definecolor{TempusSageDark}{HTML}{536D87}
-% Supporting hues: dark enough for text on the corresponding pale surfaces.
-\definecolor{TempusTeal}{HTML}{27665E}
-\definecolor{TempusTealLight}{HTML}{EDF5F2}
-\definecolor{TempusAmber}{HTML}{885A20}
-\definecolor{TempusAmberLight}{HTML}{FBF4E8}
-\definecolor{TempusBurgundy}{HTML}{8A4053}
-\definecolor{TempusBurgundyLight}{HTML}{F8EFF2}
-\definecolor{TempusCodeBackground}{HTML}{F5F7FA}
 \RequirePackage{graphicx}
 \RequirePackage{amsmath,amssymb}
 \RequirePackage{booktabs,tabularx,array}
@@ -72,14 +47,6 @@
 \iftempus@listings
   \RequirePackage{listings}
   \RequirePackage{needspace}
-  % Keep code font selection local; do not replace the report's body fonts.
-  \ifPDFTeX
-    \newcommand{\tempuscodefont}{\fontfamily{lmtt}\selectfont}
-  \else
-    \newfontfamily\tempuscodefont{lmmonolt10}[Extension=.otf,
-      UprightFont=*-regular,BoldFont=*-bold,
-      ItalicFont=*-oblique,BoldItalicFont=*-boldoblique]
-  \fi
 \fi
 \RequirePackage[authoryear,round]{natbib}
 \RequirePackage{xurl}
@@ -133,15 +100,6 @@
 \setcounter{tocdepth}{2}
 \setlist[itemize]{leftmargin=1.5em,itemsep=3pt,topsep=4pt,parsep=0pt}
 \setlist[enumerate]{leftmargin=1.8em,itemsep=3pt,topsep=4pt,parsep=0pt}
-% Native vector mark: a T crossbar/stem with an offset teal time tick.
-\newcommand{\reportlogomark}{%
-  \begin{tikzpicture}[x=1mm,y=1mm,baseline=1mm]
-    \path[use as bounding box] (0,0) rectangle (6,6);
-    \fill[TempusAccent] (0,4.5) rectangle (6,6);
-    \fill[TempusAccent] (2.25,0) rectangle (3.75,4.5);
-    \fill[TempusTeal] (4.5,0) rectangle (6,1.5);
-  \end{tikzpicture}%
-}
 \newcommand{\reportbrand}[2]{\gdef\tempus@lab{#1}\gdef\tempus@group{#2}}
 \newcommand{\reporttype}[1]{\gdef\tempus@type{#1}}
 \newcommand{\reportnumber}[1]{\gdef\tempus@number{#1}}

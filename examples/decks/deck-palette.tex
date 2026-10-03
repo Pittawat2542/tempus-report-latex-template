@@ -1,0 +1,16 @@
+\documentclass[11pt,aspectratio=43]{beamer}
+\usetheme{Tempus}
+\definecolor{TempusAccent}{HTML}{27665E}
+\title{Palette override}
+\author{Fixture Author}
+\date{October 2026}
+\begin{document}
+\begin{frame}[plain]\titlepage\end{frame}
+\begin{frame}{Palette override survives theme loading}
+  \reportlogomark\par
+  \begin{block}{Note: the navy role now uses teal}
+    Named color overrides also update the shared vector mark.
+  \end{block}
+  \begin{exampleblock}{Tip: use semantic labels}Meaning survives color changes.\end{exampleblock}
+\end{frame}
+\end{document}

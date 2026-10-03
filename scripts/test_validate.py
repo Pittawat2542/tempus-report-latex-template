@@ -4,9 +4,10 @@ from pathlib import Path
 import unittest
 
 from pypdf import PdfWriter
-from pypdf.generic import ArrayObject, DictionaryObject, NameObject, NumberObject, TextStringObject
+from pypdf.generic import ArrayObject, DictionaryObject, NameObject, NumberObject, TextStringObject, DecodedStreamObject
 
-from validate import check_behavior, class_warnings, inspect_pdf, rendered_equal
+from deck_validation import deck_sources, on_page_text, theme_warnings
+from validate import ROOT, check_behavior, class_warnings, inspect_pdf, rendered_equal
 
 
 class EvidenceChecks(unittest.TestCase):
@@ -56,6 +57,51 @@ class EvidenceChecks(unittest.TestCase):
             self.make_pdf(new, width=80)
             with self.assertRaisesRegex(AssertionError, 'size drift'):
                 rendered_equal(old, new, work)
+
+
+class DeckEvidenceChecks(unittest.TestCase):
+    def test_variants_preserve_canonical_content(self):
+        import re
+        with tempfile.TemporaryDirectory() as directory:
+            sources = deck_sources(ROOT, Path(directory))
+            canonical = (ROOT / 'tempus-deck.tex').read_text()
+            strip_class = lambda text: re.sub(r'\\documentclass\[[^]]*\]\{beamer\}', '', text)
+            for source in sources:
+                if source.stem in ('deck-43', 'deck-handout', 'deck-43-handout'):
+                    self.assertEqual(strip_class(canonical), strip_class(source.read_text()))
+
+    def test_shared_package_is_the_only_palette_and_mark_definition(self):
+        shared = (ROOT / 'tempusdesign.sty').read_text()
+        self.assertIn(r'\definecolor{TempusAccent}', shared)
+        self.assertIn(r'\newcommand{\reportlogomark}', shared)
+        for name in ('tempusreport.cls', 'beamerthemeTempus.sty'):
+            source = (ROOT / name).read_text()
+            self.assertIn('{tempusdesign}', source)
+            self.assertNotIn(r'\definecolor{Tempus', source)
+            self.assertNotIn(r'\newcommand{\reportlogomark}', source)
+        self.assertNotIn(r'\RequirePackage{listings}', shared)
+
+    def test_off_page_overlay_text_is_excluded(self):
+        writer = PdfWriter()
+        page = writer.add_blank_page(width=72, height=72)
+        font = DictionaryObject({NameObject('/Type'): NameObject('/Font'),
+                                 NameObject('/Subtype'): NameObject('/Type1'),
+                                 NameObject('/BaseFont'): NameObject('/Helvetica')})
+        page[NameObject('/Resources')] = DictionaryObject({
+            NameObject('/Font'): DictionaryObject({NameObject('/F1'): writer._add_object(font)})})
+        stream = DecodedStreamObject()
+        stream.set_data(b'BT /F1 10 Tf 10 40 Td (VISIBLE) Tj ET '
+                        b'q 1 0 0 1 2000 2000 cm BT /F1 10 Tf 10 40 Td (HIDDEN) Tj ET Q')
+        page[NameObject('/Contents')] = writer._add_object(stream)
+        self.assertIn('HIDDEN', page.extract_text())
+        self.assertIn('VISIBLE', on_page_text(page))
+        self.assertNotIn('HIDDEN', on_page_text(page))
+
+    def test_theme_warning_multiplicity_is_preserved(self):
+        warning = "Package beamerthemeTempus Warning: Missing artwork 'absent'.\n\n"
+        self.assertEqual(theme_warnings(warning * 2), ["Missing artwork 'absent'"] * 2)
+        wrapped = "Package beamerthemeTempus Warning: Missing artwork\n(beamerthemeTempus) 'absent'.\n\n"
+        self.assertEqual(theme_warnings(wrapped), ["Missing artwork 'absent'"])
 
 
 class ContinuationChecks(unittest.TestCase):

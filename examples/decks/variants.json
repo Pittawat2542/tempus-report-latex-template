@@ -1,0 +1,22 @@
+{
+  "deck-43": {
+    "source": "tempus-deck.tex",
+    "options": "11pt,aspectratio=43"
+  },
+  "deck-handout": {
+    "source": "tempus-deck.tex",
+    "options": "11pt,aspectratio=169,handout"
+  },
+  "deck-43-handout": {
+    "source": "tempus-deck.tex",
+    "options": "11pt,aspectratio=43,handout"
+  },
+  "deck-starter-43": {
+    "source": "tempus-deck-starter.tex",
+    "options": "11pt,aspectratio=43"
+  },
+  "deck-overlays-handout": {
+    "source": "examples/decks/deck-overlays.tex",
+    "options": "11pt,aspectratio=169,handout"
+  }
+}

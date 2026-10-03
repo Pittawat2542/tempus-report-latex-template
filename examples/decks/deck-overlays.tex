@@ -1,0 +1,15 @@
+\documentclass[11pt,aspectratio=169]{beamer}
+\usetheme{Tempus}
+\title{Overlay control}
+\author{Fixture Author}
+\begin{document}
+\section{Explicit frames only}
+\begin{frame}{Author-controlled overlays}
+  \begin{itemize}
+    \item<1-> FIRSTOVERLAY
+    \item<2-> SECONDOVERLAY
+    \item<3-> THIRDOVERLAY
+  \end{itemize}
+  \begin{importantblock}<2->{Important: deliberate reveal}IMPORTANTOVERLAY\end{importantblock}
+\end{frame}
+\end{document}
