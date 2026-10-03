@@ -6,7 +6,7 @@ import unittest
 from pypdf import PdfWriter
 from pypdf.generic import ArrayObject, DictionaryObject, NameObject, NumberObject, TextStringObject
 
-from validate import class_warnings, inspect_pdf, rendered_equal
+from validate import check_behavior, class_warnings, inspect_pdf, rendered_equal
 
 
 class EvidenceChecks(unittest.TestCase):
@@ -56,6 +56,47 @@ class EvidenceChecks(unittest.TestCase):
             self.make_pdf(new, width=80)
             with self.assertRaisesRegex(AssertionError, 'size drift'):
                 rendered_equal(old, new, work)
+
+
+class ContinuationChecks(unittest.TestCase):
+    spaced = ('Listing 1. Continued Algorithm 1. Continued '
+              'Continuing box (continued) 3 checkpoint003 = 3 2 x ← x + 1')
+    joined = ('Listing1.Continued Algorithm1.Continued '
+              'Continuing box (continued) 3checkpoint003 = 3 2x←x+1')
+
+    def check_text(self, text, entries=2):
+        with tempfile.TemporaryDirectory() as directory:
+            work = Path(directory)
+            labels = {'lst:original': '1', 'alg:original': '1',
+                      'lst:next': '2', 'alg:next': '2'}
+            (work / 'continuations.aux').write_text(''.join(
+                r'\newlabel{' + key + '}{{' + value + '}{1}}\n'
+                for key, value in labels.items()))
+            for extension in ('lol', 'loa'):
+                (work / ('continuations.' + extension)).write_text(
+                    r'\contentsline' * entries)
+            check_behavior('continuations', work, [text], {'author': 'Fixture Author'})
+
+    def test_spaced_and_joined_pdf_text_are_accepted(self):
+        for text in (self.spaced, self.joined):
+            with self.subTest(text=text):
+                self.check_text(text)
+
+    def test_wrong_caption_number_is_rejected(self):
+        with self.assertRaisesRegex(AssertionError, 'algorithm continuation heading'):
+            self.check_text(self.joined.replace('Algorithm1.', 'Algorithm2.'))
+
+    def test_wrong_listing_line_number_is_rejected(self):
+        with self.assertRaisesRegex(AssertionError, 'listing numbers did not continue'):
+            self.check_text(self.joined.replace('3checkpoint003', '13checkpoint003'))
+
+    def test_wrong_algorithm_line_number_is_rejected(self):
+        with self.assertRaisesRegex(AssertionError, 'algorithm numbers did not continue'):
+            self.check_text(self.joined.replace('2x←', '12x←'))
+
+    def test_duplicate_index_entry_is_rejected(self):
+        with self.assertRaisesRegex(AssertionError, 'duplicate continuation index'):
+            self.check_text(self.joined, entries=3)
 
 
 if __name__ == '__main__':

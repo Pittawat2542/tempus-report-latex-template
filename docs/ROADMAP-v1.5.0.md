@@ -8,7 +8,7 @@ this is a release candidate, not a completed four-engine release.
 | Release step | Status | Evidence / remaining gate |
 | --- | --- | --- |
 | Listing pagination | Implemented | Near-bottom environment/external-file fixtures assert caption and first two lines share a page; long listings remain breakable. The example workaround is removed. |
-| Multi-engine validation | Implemented; evidence pending | Runner supports all four engines; GitHub Actions pins Tectonic 0.17.0 by download checksum and TeX Live 2026 by image digest. Only Tectonic is available locally. |
+| Multi-engine validation | Implemented; CI rerun pending | Tectonic, XeLaTeX and LuaLaTeX CI jobs passed. The pdfLaTeX text-extraction assertion is corrected and passes against retained artifacts; rerun the matrix before closing the gate. |
 | Artwork/configuration recovery | Implemented | Exact expected-warning fixtures cover missing/suppressed branding, graphics paths/extensions, unknown enums, nonpositive/oversized widths and negative/excessive overlap. |
 | Continuations and starter | Implemented | Continued boxes, explicit external listing segments, and stored/restored algorithms retain numbering and one logical index entry. Minimal starter includes bibliography instructions. |
 
@@ -20,11 +20,21 @@ optional-package loading, and expected warnings. Canonical PDF drift checks
 compare page text and renders, excluding volatile metadata. Tectonic 0.17.0
 passes all 22 documents plus the isolated vector-asset export. The regenerated
 comprehensive example is seventeen pages with 22 bookmarks, 160 named
-destinations, 112 internal links, and 5 external links. Four validator tests
+destinations, 112 internal links, and 5 external links. Nine validator tests
 reject invalid navigation and visual drift while tolerating metadata changes.
 All report pages, fixture titles, and pagination/continuation pages were
 rendered and reviewed. Valid flat/cuboid artwork renders match the original
 class exactly. Inline code placement is covered by a PDF text-line assertion.
+
+CI run [37039448466](https://github.com/Pittawat2542/tempus-report-latex-template/actions/runs/37039448466)
+compiled all fixtures on all four engines. Its pdfLaTeX job failed a validator
+assertion because extraction joined `Algorithm 1.Continued` and resumed line
+numbers to their code. The corrected checks tolerate omitted inter-run spaces
+and still reject incorrect numbers or duplicate index entries. Rechecking
+all retained PDFs/auxiliary files passes behavior, navigation, and expected
+warnings for 22 documents per engine. The pdfLaTeX continuation rendering was
+also inspected; this does not substitute for a fresh CI run and complete
+cross-engine visual review.
 
 Release completion requires all four CI jobs to pass and a visual font/layout
 review on each engine. Do not close that gate using local Tectonic evidence.

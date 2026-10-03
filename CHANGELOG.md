@@ -33,12 +33,16 @@ class release; `\reportversion` remains author-controlled report metadata.
 - Listing captions no longer require the example's manual page-break workaround.
 - Optional missing branding no longer aborts a report build.
 - Continued algorithms in the stress example retain the first caption identity.
+- Continuation validation accepts pdfLaTeX PDF text with omitted inter-run
+  spaces while still rejecting incorrect caption/line numbers and duplicate
+  index entries. Assertion failures now identify the specific failed check.
 
 ### Release gate
 
-- Local Tectonic 0.17.0 validation and visual review are recorded in the roadmap.
-  pdfLaTeX, XeLaTeX, and LuaLaTeX remain pending CI evidence and font review.
-  This entry does not declare a completed release or a publication date.
+- Tectonic, XeLaTeX, and LuaLaTeX CI jobs passed. Corrected pdfLaTeX checks
+  pass against retained CI artifacts; a fresh matrix run and complete
+  cross-engine visual review remain pending. This entry does not declare a
+  completed release or a publication date.
 
 ### Changed
 
@@ -53,11 +57,15 @@ class release; `\reportversion` remains author-controlled report metadata.
 
 ### Validation
 
-- All 22 report documents pass Tectonic 0.17.0 validation; four tests verify
-  warning parsing, rejection of invalid link destinations, and PDF drift policy.
+- All 22 report documents pass Tectonic 0.17.0 validation; nine tests verify
+  warning parsing, invalid link destinations, PDF drift policy, and continuation
+  text extraction across engine/font combinations.
 - The regenerated example is seventeen pages, with resolved navigation,
   citations, and references. Existing flat/cuboid artwork fixture renders match
   the original class exactly. All report pages and fixture titles were reviewed.
+- The corrected validator passes behavior/navigation/expected-warning checks
+  against all 22 retained documents from each of the four engines in CI run
+  37039448466. A fresh CI rerun remains required for the release gate.
 - Inline listings retain their surrounding text line, checked in the PDF;
   pagination tests also cover floating and bottom-caption listings.
 

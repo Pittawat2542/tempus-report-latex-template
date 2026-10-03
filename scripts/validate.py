@@ -130,9 +130,9 @@ def check_behavior(name, work, pages, evidence):
                     'alg:appendix': 'A.1', 'lst:appendix': 'A.1'}
         for key, number in expected.items():
             assert label_number(aux, key) == number, f'appendix numbering: {key}'
-        assert r'\newlabel{sec:appendix@cref}{{[appendix]' in aux
-        assert evidence['bookmarks'] >= 20 and evidence['internal_links'] >= 80
-        assert evidence['external_links'] >= 5
+        assert r'\newlabel{sec:appendix@cref}{{[appendix]' in aux, 'appendix reference type is not appendix'
+        assert evidence['bookmarks'] >= 20 and evidence['internal_links'] >= 80, f'insufficient PDF navigation: {evidence}'
+        assert evidence['external_links'] >= 5, 'missing external links'
         text = ' '.join(pages)
         for heading in ('Contents', 'List of Figures', 'List of Tables', 'List of Algorithms', 'Listings'):
             assert heading in text, f'missing navigation index {heading}'
@@ -148,24 +148,27 @@ def check_behavior(name, work, pages, evidence):
         start = next(i for i, text in enumerate(pages) if 'FIRSTFILE' in text)
         end = next(i for i, text in enumerate(pages) if 'LASTFILE' in text)
         assert end > start, 'long listing no longer breaks'
-        assert label_number(aux, 'lst:env') == '1' and label_number(aux, 'lst:file') == '2'
-        assert label_number(aux, 'lst:float') == '3'
+        assert label_number(aux, 'lst:env') == '1' and label_number(aux, 'lst:file') == '2', 'pagination listing numbers are not 1 and 2'
+        assert label_number(aux, 'lst:float') == '3', 'floating listing number is not 3'
         for i in range(3, 101):
             assert f'checkpoint{i:03d}' in ' '.join(pages), f'lost listing line {i}'
     if name == 'continuations':
-        assert label_number(aux, 'lst:original') == '1'
-        assert label_number(aux, 'alg:original') == '1'
+        assert label_number(aux, 'lst:original') == '1', 'original listing number is not 1'
+        assert label_number(aux, 'alg:original') == '1', 'original algorithm number is not 1'
         lol = (work / (name + '.lol')).read_text()
         loa = (work / (name + '.loa')).read_text()
         assert lol.count(r'\contentsline') == loa.count(r'\contentsline') == 2, 'duplicate continuation index'
         assert label_number(aux, 'lst:next') == '2', 'continuation consumed listing number'
         assert label_number(aux, 'alg:next') == '2', 'continuation consumed algorithm number'
         text = ' '.join(pages)
-        assert 'Listing 1. Continued' in text and 'Algorithm 1. Continued' in text
-        assert 'Continuing box (continued)' in text
+        # PDF font/engine combinations may omit spaces between adjacent runs.
+        # Match their content without accepting different labels or line numbers.
+        assert re.search(r'\bListing\s*1\.\s*Continued\b', text), 'missing listing continuation heading in extracted PDF text'
+        assert re.search(r'\bAlgorithm\s*1\.\s*Continued\b', text), 'missing algorithm continuation heading in extracted PDF text'
+        assert 'Continuing box (continued)' in text, 'missing repeated box heading in extracted PDF text'
         # Numbering must resume at 3 after the two-line first segment.
-        assert re.search(r'3\s+checkpoint003', text), 'listing numbers did not continue'
-        assert re.search(r'2\s+x', text), 'algorithm numbers did not continue'
+        assert re.search(r'(?<!\w)3\s*checkpoint003\b', text), 'listing numbers did not continue'
+        assert re.search(r'(?<!\w)2\s*x\b', text), 'algorithm numbers did not continue'
 
 
 def rendered_equal(old, new, work):
@@ -259,7 +262,7 @@ def main():
             print(f'PASS {name}', flush=True)
         except (AssertionError, ValueError, OSError, StopIteration) as error:
             failures.append(name)
-            print(f'FAIL {name}: {error}', flush=True)
+            print(f'FAIL {name}: {str(error) or type(error).__name__}', flush=True)
     # Always preserve machine-readable inspection evidence, even on failure.
     (out / 'inspection.json').write_text(json.dumps({'engine': args.engine, 'documents': report, 'failures': failures}, indent=2)+'\n')
     if failures:
